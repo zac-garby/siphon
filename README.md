@@ -23,4 +23,4 @@ Data can be modified in a similar way.
  - Selector syntax for querying and adding new data
  - Access the database via the HTTP API
  - Schema support to enforce types and database structure
- - Data available as JSON or Go binary data
+ - Responses available as JSON or Go binary data
