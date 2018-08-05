@@ -43,7 +43,7 @@ func handleJSONSelector(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bytes, err := json.MarshalIndent(parsed, "", "  ")
+	bytes, err := json.Marshal(parsed)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
