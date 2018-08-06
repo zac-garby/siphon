@@ -25,9 +25,51 @@ type Item interface {
 	// Raw returns a Go value to represent the Item
 	Raw() interface{}
 
-	GetIndex(index int) (result Item, status int)
-	GetKey(key string) (result Item, status int)
-	Compare(kind Comparison, other Item) (result bool, status int)
-	Append(items ...Item) (status int)
-	Prepend(items ...Item) (status int)
+	GetIndex(index int) (result Item, status string)
+	GetKey(key Item) (result Item, status string)
+	GetField(key string) (result Item, status string)
+	SetIndex(index int, to Item) (status string)
+	SetKey(key Item, to Item) (status string)
+	SetField(key string, to Item) (status string)
+	Compare(kind Comparison, other Item) (result bool, status string)
+	Append(items ...Item) (status string)
+	Prepend(items ...Item) (status string)
+}
+
+type itemDefaults struct{}
+
+func (i *itemDefaults) GetIndex(index int) (result Item, status string) {
+	return nil, StatusNOOP
+}
+
+func (i *itemDefaults) GetKey(key Item) (result Item, status string) {
+	return nil, StatusNOOP
+}
+
+func (i *itemDefaults) GetField(key string) (result Item, status string) {
+	return nil, StatusNOOP
+}
+
+func (i *itemDefaults) SetIndex(index int, to Item) (status string) {
+	return StatusNOOP
+}
+
+func (i *itemDefaults) SetKey(key Item, to Item) (status string) {
+	return StatusNOOP
+}
+
+func (i *itemDefaults) SetField(key string, to Item) (status string) {
+	return StatusNOOP
+}
+
+func (i *itemDefaults) Compare(kind Comparison, other Item) (result bool, status string) {
+	return false, StatusNOOP
+}
+
+func (i *itemDefaults) Append(items ...Item) (status string) {
+	return StatusNOOP
+}
+
+func (i *itemDefaults) Prepend(items ...Item) (status string) {
+	return StatusNOOP
 }
