@@ -20,7 +20,7 @@ func NewHashmap() *Hashmap {
 
 // Type returns the type of the Item
 func (h *Hashmap) Type() string {
-	return "hashmap"
+	return TypeHashmap
 }
 
 // Raw returns a Go value to represent the Item

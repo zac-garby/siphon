@@ -30,6 +30,17 @@ const (
 	StatusError = "ERR"
 )
 
+// The different types
+const (
+	TypeAny     = "any"
+	TypeString  = "string"
+	TypeFloat   = "float"
+	TypeInt     = "int"
+	TypeBool    = "bool"
+	TypeList    = "list"
+	TypeHashmap = "hashmap"
+)
+
 // An Item is any object in the database, such as a primitive number object or
 // something more complicated like a hashmap.
 type Item interface {

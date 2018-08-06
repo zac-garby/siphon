@@ -16,7 +16,7 @@ func NewString(val string) *String {
 
 // Type returns the type of the Item
 func (s *String) Type() string {
-	return "string"
+	return TypeString
 }
 
 // Raw returns a Go value to represent the Item
