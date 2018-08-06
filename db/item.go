@@ -13,7 +13,7 @@ const (
 	More
 	LessOrEqual
 	MoreOrEqual
-	Regexp
+	RegexpMatch
 )
 
 const (
@@ -32,11 +32,24 @@ const (
 
 // The different types
 const (
-	TypeAny     = "any"
-	TypeString  = "string"
+	TypeAny = "any"
+
 	TypeFloat   = "float"
-	TypeInt     = "int"
+	TypeFloat32 = "float32"
+
+	TypeInt   = "int"
+	TypeInt32 = "int32"
+	TypeInt16 = "int16"
+	TypeInt8  = "int8"
+
+	TypeUint   = "uint"
+	TypeUint32 = "uint32"
+	TypeUint16 = "uint16"
+	TypeUint8  = "uint8"
+
+	TypeString  = "string"
 	TypeBool    = "bool"
+	TypeRegexp  = "regexp"
 	TypeList    = "list"
 	TypeHashmap = "hashmap"
 )
