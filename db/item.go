@@ -16,6 +16,20 @@ const (
 	Regexp
 )
 
+const (
+	// StatusOK means that the operation has been carried out successfully
+	StatusOK = "OK"
+
+	// StatusNOOP means that the operation cannot be performed on the type
+	StatusNOOP = "NOOP"
+
+	// StatusIndex means that an invalid index or key was requested
+	StatusIndex = "IDX_ERR"
+
+	// StatusError means that an unknown error has occurred
+	StatusError = "ERR"
+)
+
 // An Item is any object in the database, such as a primitive number object or
 // something more complicated like a hashmap.
 type Item interface {
