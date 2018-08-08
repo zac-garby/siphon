@@ -60,3 +60,54 @@ type SchemaStruct struct {
 	Name   string         `"struct" @Ident`
 	Fields []*SchemaField `"{" { { Newline } @@ { Newline } } "}"`
 }
+
+// MakeZeroValue makes a new Item which has the zero value of the
+// given schema type.
+func MakeZeroValue(t *SchemaType) Item {
+	if id := t.Ident; id != "" {
+		return makeIdentZeroValue(id)
+	} else if li := t.List; li != nil {
+
+	} else if hm := t.Hashmap; hm != nil {
+
+	}
+
+	return nil
+}
+
+func makeIdentZeroValue(id string) Item {
+	switch id {
+	case "float":
+		return &Float{value: 0}
+	case "float32":
+		return &Float32{value: 0}
+
+	case "int":
+		return &Int{value: 0}
+	case "int32":
+		return &Int32{value: 0}
+	case "int16":
+		return &Int16{value: 0}
+	case "int8":
+		return &Int8{value: 0}
+
+	case "uint":
+		return &Uint{value: 0}
+	case "uint32":
+		return &Uint32{value: 0}
+	case "uint16":
+		return &Uint16{value: 0}
+	case "uint8":
+		return &Uint8{value: 16}
+
+	case "string":
+		return &String{value: "foo"}
+	case "bool":
+		return &Bool{value: false}
+	case "regexp":
+		return &Regexp{value: ""}
+
+	default:
+		return nil
+	}
+}
