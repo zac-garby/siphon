@@ -102,10 +102,10 @@ func makeIdentZeroValue(id string) Item {
 	case "uint16":
 		return &Uint16{value: 0}
 	case "uint8":
-		return &Uint8{value: 16}
+		return &Uint8{value: 0}
 
 	case "string":
-		return &String{value: "foo"}
+		return &String{value: ""}
 	case "bool":
 		return &Bool{value: false}
 	case "regexp":
