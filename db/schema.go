@@ -67,9 +67,13 @@ func MakeZeroValue(t *SchemaType) Item {
 	if id := t.Ident; id != "" {
 		return makeIdentZeroValue(id)
 	} else if li := t.List; li != nil {
-
+		return &List{
+			value: make([]Item, 0),
+		}
 	} else if hm := t.Hashmap; hm != nil {
-
+		return &Hashmap{
+			data: make(map[string]Item),
+		}
 	}
 
 	return nil
