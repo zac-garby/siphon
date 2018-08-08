@@ -24,4 +24,38 @@ func MakeDB(schema *Schema) *DB {
 
 	return db
 }
+
+// Query queries a database with a selector.
+func (d *DB) Query(selector *Selector) (result Item, status string) {
+	result = d.data
+
+	for _, clause := range selector.Clauses {
+		result, status = d.QuerySelectorClause(result, clause)
+		if status != StatusOK {
+			return
+		}
+	}
+
+	return
+}
+
+// QuerySelectorClause queries an item
+func (d *DB) QuerySelectorClause(item Item, clause *SelectorClause) (result Item, status string) {
+	hm, ok := item.(*Hashmap)
+	if !ok {
+		return nil, StatusNOOP
+	}
+
+	return hm.GetKey(NewString(clause.Ident))
+}
+
+// QueryString queries a database, parsing the string as
+// as selector first.
+func (d *DB) QueryString(str string) (result Item, status string) {
+	selector := &Selector{}
+	if err := SelectorParser.ParseString(str, selector); err != nil {
+		return nil, err.Error()
+	}
+
+	return d.Query(selector)
 }
