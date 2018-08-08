@@ -52,10 +52,10 @@ type SelectorClause struct {
 	Filters []*SelectorFilter `{ "[" @@ "]" }`
 }
 
-// A SelectorFilter filters a clause based on either an index or a comparison.
+// A SelectorFilter filters a clause based on either a literal key or a comparison.
 type SelectorFilter struct {
 	Comparison *SelectorFilterComparison `  @@`
-	Index      *float64                  `| @Number`
+	Index      *SelectorLiteral          `| @@`
 }
 
 // A SelectorFilterComparison filters a clause based on whether an attribute of

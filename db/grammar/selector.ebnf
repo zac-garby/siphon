@@ -23,6 +23,6 @@ literal =
 
 clause = ident, { "[", filter, "]" };
 
-filter = number | ( ident, comparison, literal );
+filter = ( ident, comparison, literal ) | literal;
 
 selector = clause, { ".", clause };
