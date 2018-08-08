@@ -60,8 +60,7 @@ type Item interface {
 	// Type returns a string representing the type of the Item
 	Type() string
 
-	// Raw returns a Go value to represent the Item
-	Raw() interface{}
+	String() string
 
 	GetIndex(index int) (result Item, status string)
 	GetKey(key Item) (result Item, status string)

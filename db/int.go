@@ -1,5 +1,7 @@
 package db
 
+import "fmt"
+
 // An Int is just a basic 64-bit integer.
 type Int struct {
 	*itemDefaults
@@ -19,9 +21,8 @@ func (i *Int) Type() string {
 	return TypeInt
 }
 
-// Raw returns a Go value representing this item.
-func (i *Int) Raw() interface{} {
-	return i.value
+func (i *Int) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items
@@ -78,9 +79,8 @@ func (i *Int32) Type() string {
 	return TypeInt
 }
 
-// Raw returns a Go value representing this item.
-func (i *Int32) Raw() interface{} {
-	return i.value
+func (i *Int32) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items
@@ -137,9 +137,8 @@ func (i *Int16) Type() string {
 	return TypeInt
 }
 
-// Raw returns a Go value representing this item.
-func (i *Int16) Raw() interface{} {
-	return i.value
+func (i *Int16) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items
@@ -196,9 +195,8 @@ func (i *Int8) Type() string {
 	return TypeInt
 }
 
-// Raw returns a Go value representing this item.
-func (i *Int8) Raw() interface{} {
-	return i.value
+func (i *Int8) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items

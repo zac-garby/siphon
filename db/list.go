@@ -1,5 +1,7 @@
 package db
 
+import "strings"
+
 // A List stores an ordered sequence of items.
 type List struct {
 	*itemDefaults
@@ -19,9 +21,27 @@ func (l *List) Type() string {
 	return TypeList
 }
 
-// Raw returns a Go value to represent the item.
-func (l *List) Raw() interface{} {
-	return l.value
+func (l *List) String() string {
+	str := &strings.Builder{}
+
+	str.WriteByte('[')
+
+	for i, item := range l.value {
+		if i > 0 {
+			str.WriteString(", ")
+		}
+
+		if i > 10 {
+			str.WriteString("...")
+			break
+		}
+
+		str.WriteString(item.String())
+	}
+
+	str.WriteByte(']')
+
+	return str.String()
 }
 
 // GetIndex returns the item at the given index.

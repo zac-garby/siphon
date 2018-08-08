@@ -23,59 +23,65 @@ func (s *String) Type() string {
 	return TypeString
 }
 
-// Raw returns a Go value to represent the Item
-func (s *String) Raw() interface{} {
+func (s *String) String() string {
 	return s.value
 }
 
 // Compare compares an item with another item
 func (s *String) Compare(kind Comparison, other Item) (result bool, status string) {
+	if kind == RegexpMatch {
+		or, ok := other.(*Regexp)
+		if !ok {
+			return false, StatusNOOP
+		}
+
+		reg, err := regexp.Compile(or.value)
+		if err != nil {
+			return false, StatusError
+		}
+
+		return reg.MatchString(s.value), StatusOK
+	}
+
+	os, ok := other.(*String)
+	if !ok {
+		return false, StatusOK
+	}
+
 	switch kind {
 	case Equal:
-		return s.value == other.Raw(), StatusOK
+		return s.value == os.value, StatusOK
 
 	case NotEqual:
-		return s.value != other.Raw(), StatusOK
+		return s.value != os.value, StatusOK
 
 	case Less:
 		if other.Type() != TypeString {
 			return false, StatusOK
 		}
 
-		return s.value < other.Raw().(string), StatusOK
+		return s.value < os.value, StatusOK
 
 	case More:
 		if other.Type() != TypeString {
 			return false, StatusOK
 		}
 
-		return s.value > other.Raw().(string), StatusOK
+		return s.value > os.value, StatusOK
 
 	case LessOrEqual:
 		if other.Type() != TypeString {
 			return false, StatusOK
 		}
 
-		return s.value <= other.Raw().(string), StatusOK
+		return s.value <= os.value, StatusOK
 
 	case MoreOrEqual:
 		if other.Type() != TypeString {
 			return false, StatusOK
 		}
 
-		return s.value >= other.Raw().(string), StatusOK
-
-	case RegexpMatch:
-		if other.Type() != TypeRegexp {
-			return false, StatusNOOP
-		}
-
-		reg, err := regexp.Compile(other.Raw().(string))
-		if err != nil {
-			return false, StatusError
-		}
-
-		return reg.MatchString(s.value), StatusOK
+		return s.value >= os.value, StatusOK
 
 	default:
 		return false, StatusNOOP

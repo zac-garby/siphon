@@ -19,7 +19,6 @@ func (r *Regexp) Type() string {
 	return TypeRegexp
 }
 
-// Raw returns a Go value to represent the item
-func (r *Regexp) Raw() interface{} {
+func (r *Regexp) String() string {
 	return r.value
 }

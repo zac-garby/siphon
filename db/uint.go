@@ -1,5 +1,7 @@
 package db
 
+import "fmt"
+
 // An Uint is just a basic 64-bit unsigned integer.
 type Uint struct {
 	*itemDefaults
@@ -19,9 +21,8 @@ func (i *Uint) Type() string {
 	return TypeUint
 }
 
-// Raw returns a Go value representing this item.
-func (i *Uint) Raw() interface{} {
-	return i.value
+func (i *Uint) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items
@@ -78,9 +79,8 @@ func (i *Uint32) Type() string {
 	return TypeUint
 }
 
-// Raw returns a Go value representing this item.
-func (i *Uint32) Raw() interface{} {
-	return i.value
+func (i *Uint32) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items
@@ -137,9 +137,8 @@ func (i *Uint16) Type() string {
 	return TypeUint
 }
 
-// Raw returns a Go value representing this item.
-func (i *Uint16) Raw() interface{} {
-	return i.value
+func (i *Uint16) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items
@@ -196,9 +195,8 @@ func (i *Uint8) Type() string {
 	return TypeUint
 }
 
-// Raw returns a Go value representing this item.
-func (i *Uint8) Raw() interface{} {
-	return i.value
+func (i *Uint8) String() string {
+	return fmt.Sprintf("%d", i.value)
 }
 
 // Compare compares two items

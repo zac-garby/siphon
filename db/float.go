@@ -1,5 +1,10 @@
 package db
 
+import (
+	"fmt"
+	"strconv"
+)
+
 // A Float is just a basic 64-bit floating point number.
 type Float struct {
 	*itemDefaults
@@ -19,9 +24,8 @@ func (f *Float) Type() string {
 	return TypeFloat
 }
 
-// Raw returns a Go value to represent the Item
-func (f *Float) Raw() interface{} {
-	return f.value
+func (f *Float) String() string {
+	return fmt.Sprintf("%f", f.value)
 }
 
 // Compare compares two items
@@ -76,9 +80,8 @@ func (f *Float32) Type() string {
 	return TypeFloat32
 }
 
-// Raw returns a Go value to represent the Item
-func (f *Float32) Raw() interface{} {
-	return f.value
+func (f *Float32) String() string {
+	return fmt.Sprintf("%f", f.value)
 }
 
 // Compare compares two items
@@ -117,28 +120,10 @@ func (f *Float32) Compare(kind Comparison, other Item) (result bool, status stri
 //////////////////////////////////////////////
 
 func castNumeric(item Item) (val float64, ok bool) {
-	switch val := item.Raw().(type) {
-	case float64:
-		return val, true
-	case float32:
-		return float64(val), true
-	case int64:
-		return float64(val), true
-	case int32:
-		return float64(val), true
-	case int16:
-		return float64(val), true
-	case int8:
-		return float64(val), true
-	case uint64:
-		return float64(val), true
-	case uint32:
-		return float64(val), true
-	case uint16:
-		return float64(val), true
-	case uint8:
-		return float64(val), true
-	default:
+	val, err := strconv.ParseFloat(item.String(), 64)
+	if err != nil {
 		return 0, false
 	}
+
+	return val, true
 }
