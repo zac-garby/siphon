@@ -67,13 +67,9 @@ func MakeZeroValue(t *SchemaType) Item {
 	if id := t.Ident; id != "" {
 		return makeIdentZeroValue(id)
 	} else if li := t.List; li != nil {
-		return &List{
-			value: make([]Item, 0),
-		}
+		return NewList()
 	} else if hm := t.Hashmap; hm != nil {
-		return &Hashmap{
-			data: make(map[string]Item),
-		}
+		return NewHashmap()
 	}
 
 	return nil
@@ -82,34 +78,34 @@ func MakeZeroValue(t *SchemaType) Item {
 func makeIdentZeroValue(id string) Item {
 	switch id {
 	case "float":
-		return &Float{value: 0}
+		return NewFloat(0)
 	case "float32":
-		return &Float32{value: 0}
+		return NewFloat32(0)
 
 	case "int":
-		return &Int{value: 0}
+		return NewInt(0)
 	case "int32":
-		return &Int32{value: 0}
+		return NewInt32(0)
 	case "int16":
-		return &Int16{value: 0}
+		return NewInt16(0)
 	case "int8":
-		return &Int8{value: 0}
+		return NewInt8(0)
 
 	case "uint":
-		return &Uint{value: 0}
+		return NewUint(0)
 	case "uint32":
-		return &Uint32{value: 0}
+		return NewUint32(0)
 	case "uint16":
-		return &Uint16{value: 0}
+		return NewUint16(0)
 	case "uint8":
-		return &Uint8{value: 0}
+		return NewUint8(0)
 
 	case "string":
-		return &String{value: ""}
+		return NewString("")
 	case "bool":
-		return &Bool{value: false}
+		return NewBool(false)
 	case "regexp":
-		return &Regexp{value: ""}
+		return NewRegexp("")
 
 	default:
 		return nil
