@@ -20,5 +20,5 @@ func (r *Regexp) Type() Type {
 }
 
 func (r *Regexp) String() string {
-	return r.value
+	return "/" + r.value + "/"
 }
