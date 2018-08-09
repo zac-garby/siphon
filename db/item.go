@@ -43,6 +43,7 @@ type Item interface {
 	Type() Type
 
 	String() string
+	JSON() string
 
 	GetIndex(index int) (result Item, status string)
 	GetKey(key Item) (result Item, status string)

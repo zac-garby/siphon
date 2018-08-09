@@ -68,6 +68,36 @@ func (h *Hashmap) String() string {
 	return str.String()
 }
 
+// JSON returns a JSON representation of an item
+func (h *Hashmap) JSON() string {
+	str := &strings.Builder{}
+
+	str.WriteByte('{')
+
+	i := 0
+	for hash, val := range h.data {
+		key := h.keys[hash]
+		if i > 0 {
+			str.WriteString(", ")
+		}
+
+		if key.Type().Equals(&StringType{}) {
+			str.WriteString(key.JSON())
+		} else {
+			str.WriteString("\"" + key.String() + "\"")
+		}
+
+		str.WriteString(": ")
+		str.WriteString(val.JSON())
+
+		i++
+	}
+
+	str.WriteByte('}')
+
+	return str.String()
+}
+
 // GetKey gets the given key from the hashmap
 func (h *Hashmap) GetKey(key Item) (result Item, status string) {
 	if !key.Type().Equals(h.keyType) {

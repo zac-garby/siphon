@@ -25,6 +25,11 @@ func (i *Int) String() string {
 	return fmt.Sprintf("%d", i.value)
 }
 
+// JSON returns a JSON representation of the item
+func (i *Int) JSON() string {
+	return i.String()
+}
+
 // Compare compares two items
 func (i *Int) Compare(kind Comparison, other Item) (result bool, status string) {
 	oval, ok := castNumeric(other)
@@ -81,6 +86,11 @@ func (i *Int32) Type() Type {
 
 func (i *Int32) String() string {
 	return fmt.Sprintf("%d", i.value)
+}
+
+// JSON returns a JSON representation of the item
+func (i *Int32) JSON() string {
+	return i.String()
 }
 
 // Compare compares two items
@@ -141,6 +151,11 @@ func (i *Int16) String() string {
 	return fmt.Sprintf("%d", i.value)
 }
 
+// JSON returns a JSON representation of the item
+func (i *Int16) JSON() string {
+	return i.String()
+}
+
 // Compare compares two items
 func (i *Int16) Compare(kind Comparison, other Item) (result bool, status string) {
 	oval, ok := castNumeric(other)
@@ -197,6 +212,11 @@ func (i *Int8) Type() Type {
 
 func (i *Int8) String() string {
 	return fmt.Sprintf("%d", i.value)
+}
+
+// JSON returns a JSON representation of the item
+func (i *Int8) JSON() string {
+	return i.String()
 }
 
 // Compare compares two items

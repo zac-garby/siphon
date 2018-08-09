@@ -22,3 +22,8 @@ func (r *Regexp) Type() Type {
 func (r *Regexp) String() string {
 	return "/" + r.value + "/"
 }
+
+// JSON returns a JSON representation of an item
+func (r *Regexp) JSON() string {
+	return "\"" + r.value + "\""
+}

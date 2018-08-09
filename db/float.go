@@ -28,6 +28,11 @@ func (f *Float) String() string {
 	return fmt.Sprintf("%v", f.value)
 }
 
+// JSON returns a JSON representation of the item
+func (f *Float) JSON() string {
+	return f.String()
+}
+
 // Compare compares two items
 func (f *Float) Compare(kind Comparison, other Item) (result bool, status string) {
 	oval, ok := castNumeric(other)
@@ -82,6 +87,11 @@ func (f *Float32) Type() Type {
 
 func (f *Float32) String() string {
 	return fmt.Sprintf("%v", f.value)
+}
+
+// JSON returns a JSON representation of the item
+func (f *Float32) JSON() string {
+	return f.String()
 }
 
 // Compare compares two items

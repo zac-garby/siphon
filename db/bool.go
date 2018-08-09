@@ -25,6 +25,11 @@ func (b *Bool) String() string {
 	return fmt.Sprintf("%t", b.value)
 }
 
+// JSON returns a JSON representation of the item
+func (b *Bool) JSON() string {
+	return b.String()
+}
+
 // Compare compares two items
 func (b *Bool) Compare(kind Comparison, other Item) (result bool, status string) {
 	ob, ok := other.(*Bool)

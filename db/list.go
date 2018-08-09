@@ -48,6 +48,25 @@ func (l *List) String() string {
 	return str.String()
 }
 
+// JSON returns a JSON representation of an item
+func (l *List) JSON() string {
+	str := &strings.Builder{}
+
+	str.WriteByte('[')
+
+	for i, item := range l.value {
+		if i > 0 {
+			str.WriteString(", ")
+		}
+
+		str.WriteString(item.JSON())
+	}
+
+	str.WriteByte(']')
+
+	return str.String()
+}
+
 // GetIndex returns the item at the given index.
 func (l *List) GetIndex(index int) (result Item, status string) {
 	if index < 0 || index >= len(l.value) {

@@ -50,6 +50,26 @@ func (s *Struct) String() string {
 	return str.String()
 }
 
+// JSON returns a JSON representation of an item
+func (s *Struct) JSON() string {
+	str := &strings.Builder{}
+	str.WriteByte('{')
+
+	i := 0
+	for name, val := range s.value {
+		if i > 0 {
+			str.WriteString(", ")
+		}
+		str.WriteString("\"" + name + "\"")
+		str.WriteString(": ")
+		str.WriteString(val.JSON())
+		i++
+	}
+
+	str.WriteByte('}')
+	return str.String()
+}
+
 // GetField returns the field named 'key' in the struct.
 func (s *Struct) GetField(key string) (result Item, status string) {
 	val, ok := s.value[key]

@@ -27,6 +27,11 @@ func (s *String) String() string {
 	return "\"" + s.value + "\""
 }
 
+// JSON returns a JSON representation of an item
+func (s *String) JSON() string {
+	return s.String()
+}
+
 // Compare compares an item with another item
 func (s *String) Compare(kind Comparison, other Item) (result bool, status string) {
 	if kind == RegexpMatch {
