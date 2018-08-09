@@ -31,6 +31,9 @@ const (
 
 	// StatusType means that a type error has occurred
 	StatusType = "TYPE"
+
+	// StatusNoType means that an invalid type was specified in the schema
+	StatusNoType = "NO_TYPE"
 )
 
 // An Item is any object in the database, such as a primitive number object or

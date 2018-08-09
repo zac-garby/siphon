@@ -65,6 +65,9 @@ type SchemaStruct struct {
 // given type.
 func MakeZeroValue(t Type) Item {
 	switch ty := t.(type) {
+	case *StructType:
+		return NewStruct(ty)
+
 	case *ListType:
 		return NewList(ty.ElemType)
 
@@ -108,15 +111,29 @@ func MakeZeroValue(t Type) Item {
 
 // GetActualType takes a parsed schema type and returns an actual
 // Type instance.
-func GetActualType(st *SchemaType) Type {
+func GetActualType(st *SchemaType, structs map[string]*StructType) Type {
 	if li := st.List; li != nil {
+		ty := GetActualType(li, structs)
+		if ty == nil {
+			return nil
+		}
+
 		return &ListType{
-			ElemType: GetActualType(li),
+			ElemType: ty,
 		}
 	} else if hm := st.Hashmap; hm != nil {
+		kt := GetActualType(hm.KeyType, structs)
+		if kt == nil {
+			return nil
+		}
+		vt := GetActualType(hm.ValueType, structs)
+		if vt == nil {
+			return nil
+		}
+
 		return &HashmapType{
-			KeyType: GetActualType(hm.KeyType),
-			ValType: GetActualType(hm.ValueType),
+			KeyType: kt,
+			ValType: vt,
 		}
 	}
 
@@ -150,6 +167,12 @@ func GetActualType(st *SchemaType) Type {
 		return &BoolType{}
 	case "regexp":
 		return &RegexpType{}
+
+	default:
+		str, ok := structs[id]
+		if ok {
+			return str
+		}
 	}
 
 	return nil
