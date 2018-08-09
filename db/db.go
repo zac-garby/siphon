@@ -3,15 +3,13 @@ package db
 // A DB stores all the information about a database, and the data inside
 // it. A DB is created from a Schema.
 type DB struct {
-	data *Hashmap
+	data *Struct
 }
 
 // MakeDB makes a new database from a Schema, with all data set to its
 // initial zero value.
 func MakeDB(schema *Schema) *DB {
-	db := &DB{
-		data: NewHashmap(&StringType{}, &AnyType{}),
-	}
+	fields := make(map[string]Type)
 
 	for _, section := range schema.Sections {
 		field := section.Field
@@ -19,10 +17,17 @@ func MakeDB(schema *Schema) *DB {
 			continue
 		}
 
-		db.data.SetKey(NewString(field.Name), MakeZeroValue(GetActualType(field.Type)))
+		fields[field.Name] = GetActualType(field.Type)
 	}
 
-	return db
+	structType := &StructType{
+		Name:   "db",
+		Fields: fields,
+	}
+
+	return &DB{
+		data: NewStruct(structType),
+	}
 }
 
 // Query queries a database with a selector.
@@ -41,12 +46,7 @@ func (d *DB) Query(selector *Selector) (result Item, status string) {
 
 // QuerySelectorClause queries an item
 func (d *DB) QuerySelectorClause(item Item, clause *SelectorClause) (result Item, status string) {
-	hm, ok := item.(*Hashmap)
-	if !ok {
-		return nil, StatusNOOP
-	}
-
-	return hm.GetField(clause.Ident)
+	return item.GetField(clause.Ident)
 }
 
 // QueryString queries a database, parsing the string as
