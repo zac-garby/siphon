@@ -76,7 +76,7 @@ func NewUint32(val uint32) *Uint32 {
 
 // Type returns the type of an item.
 func (i *Uint32) Type() Type {
-	return &UintType{}
+	return &Uint32Type{}
 }
 
 func (i *Uint32) String() string {
@@ -134,7 +134,7 @@ func NewUint16(val uint16) *Uint16 {
 
 // Type returns the type of an item.
 func (i *Uint16) Type() Type {
-	return &UintType{}
+	return &Uint16Type{}
 }
 
 func (i *Uint16) String() string {
@@ -192,7 +192,7 @@ func NewUint8(val uint8) *Uint8 {
 
 // Type returns the type of an item.
 func (i *Uint8) Type() Type {
-	return &UintType{}
+	return &Uint8Type{}
 }
 
 func (i *Uint8) String() string {
