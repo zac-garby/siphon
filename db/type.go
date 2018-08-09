@@ -9,6 +9,12 @@ type Type interface {
 }
 
 type (
+	// StructType stores values under named fields, like a Go struct
+	StructType struct {
+		Name   string
+		Fields map[string]Type
+	}
+
 	// ListType stores an ordered homogenous sequence of elements
 	ListType struct {
 		ElemType Type
@@ -51,6 +57,32 @@ type (
 	// AnyType allows any type, but not item is Any
 	AnyType struct{}
 )
+
+func (s *StructType) String() string { return fmt.Sprintf("(struct) %s", s.Name) }
+
+// Equals checks whether two types are equal
+func (s *StructType) Equals(other Type) bool {
+	switch o := other.(type) {
+	case *AnyType:
+		return true
+
+	case *StructType:
+		if s.Name != o.Name || len(s.Fields) != len(o.Fields) {
+			return false
+		}
+
+		for field, ty := range s.Fields {
+			otherField, ok := o.Fields[field]
+			if !ok || !ty.Equals(otherField) {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	return false
+}
 
 func (l *ListType) String() string { return fmt.Sprintf("[%s]", l.ElemType) }
 
