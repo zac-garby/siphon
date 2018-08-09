@@ -46,7 +46,7 @@ func (d *DB) QuerySelectorClause(item Item, clause *SelectorClause) (result Item
 		return nil, StatusNOOP
 	}
 
-	return hm.GetKey(NewString(clause.Ident))
+	return hm.GetField(clause.Ident)
 }
 
 // QueryString queries a database, parsing the string as
