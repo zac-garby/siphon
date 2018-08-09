@@ -6,19 +6,23 @@ import "strings"
 type List struct {
 	*itemDefaults
 
-	value []Item
+	value   []Item
+	valType Type
 }
 
 // NewList makes a new list with the given values.
-func NewList(vals ...Item) *List {
+func NewList(valType Type, vals ...Item) *List {
 	return &List{
-		value: vals,
+		value:   vals,
+		valType: valType,
 	}
 }
 
 // Type returns the type of an item.
-func (l *List) Type() string {
-	return TypeList
+func (l *List) Type() Type {
+	return &ListType{
+		ElemType: l.valType,
+	}
 }
 
 func (l *List) String() string {

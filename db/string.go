@@ -19,8 +19,8 @@ func NewString(val string) *String {
 }
 
 // Type returns the type of the Item
-func (s *String) Type() string {
-	return TypeString
+func (s *String) Type() Type {
+	return &StringType{}
 }
 
 func (s *String) String() string {
@@ -56,28 +56,28 @@ func (s *String) Compare(kind Comparison, other Item) (result bool, status strin
 		return s.value != os.value, StatusOK
 
 	case Less:
-		if other.Type() != TypeString {
+		if other.Type().Equals(&StringType{}) {
 			return false, StatusOK
 		}
 
 		return s.value < os.value, StatusOK
 
 	case More:
-		if other.Type() != TypeString {
+		if other.Type().Equals(&StringType{}) {
 			return false, StatusOK
 		}
 
 		return s.value > os.value, StatusOK
 
 	case LessOrEqual:
-		if other.Type() != TypeString {
+		if other.Type().Equals(&StringType{}) {
 			return false, StatusOK
 		}
 
 		return s.value <= os.value, StatusOK
 
 	case MoreOrEqual:
-		if other.Type() != TypeString {
+		if other.Type().Equals(&StringType{}) {
 			return false, StatusOK
 		}
 

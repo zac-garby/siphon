@@ -10,7 +10,7 @@ type DB struct {
 // initial zero value.
 func MakeDB(schema *Schema) *DB {
 	db := &DB{
-		data: NewHashmap(),
+		data: NewHashmap(&StringType{}, &AnyType{}),
 	}
 
 	for _, section := range schema.Sections {
@@ -19,7 +19,7 @@ func MakeDB(schema *Schema) *DB {
 			continue
 		}
 
-		db.data.SetKey(NewString(field.Name), MakeZeroValue(field.Type))
+		db.data.SetKey(NewString(field.Name), MakeZeroValue(GetActualType(field.Type)))
 	}
 
 	return db

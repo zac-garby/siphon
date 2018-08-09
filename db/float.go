@@ -20,12 +20,12 @@ func NewFloat(val float64) *Float {
 }
 
 // Type returns the type of the Item
-func (f *Float) Type() string {
-	return TypeFloat
+func (f *Float) Type() Type {
+	return &FloatType{}
 }
 
 func (f *Float) String() string {
-	return fmt.Sprintf("%f", f.value)
+	return fmt.Sprintf("%v", f.value)
 }
 
 // Compare compares two items
@@ -76,12 +76,12 @@ func NewFloat32(val float32) *Float32 {
 }
 
 // Type returns the type of the Item
-func (f *Float32) Type() string {
-	return TypeFloat32
+func (f *Float32) Type() Type {
+	return &Float32Type{}
 }
 
 func (f *Float32) String() string {
-	return fmt.Sprintf("%f", f.value)
+	return fmt.Sprintf("%v", f.value)
 }
 
 // Compare compares two items

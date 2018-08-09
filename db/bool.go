@@ -17,8 +17,8 @@ func NewBool(val bool) *Bool {
 }
 
 // Type returns the type of an item
-func (b *Bool) Type() string {
-	return TypeBool
+func (b *Bool) Type() Type {
+	return &BoolType{}
 }
 
 func (b *Bool) String() string {

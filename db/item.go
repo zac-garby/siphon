@@ -28,37 +28,16 @@ const (
 
 	// StatusError means that an unknown error has occurred
 	StatusError = "ERR"
-)
 
-// The different types
-const (
-	TypeAny = "any"
-
-	TypeFloat   = "float"
-	TypeFloat32 = "float32"
-
-	TypeInt   = "int"
-	TypeInt32 = "int32"
-	TypeInt16 = "int16"
-	TypeInt8  = "int8"
-
-	TypeUint   = "uint"
-	TypeUint32 = "uint32"
-	TypeUint16 = "uint16"
-	TypeUint8  = "uint8"
-
-	TypeString  = "string"
-	TypeBool    = "bool"
-	TypeRegexp  = "regexp"
-	TypeList    = "list"
-	TypeHashmap = "hashmap"
+	// StatusType means that a type error has occurred
+	StatusType = "TYPE"
 )
 
 // An Item is any object in the database, such as a primitive number object or
 // something more complicated like a hashmap.
 type Item interface {
 	// Type returns a string representing the type of the Item
-	Type() string
+	Type() Type
 
 	String() string
 

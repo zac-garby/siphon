@@ -15,8 +15,8 @@ func NewRegexp(val string) *Regexp {
 }
 
 // Type returns the type of an item
-func (r *Regexp) Type() string {
-	return TypeRegexp
+func (r *Regexp) Type() Type {
+	return &RegexpType{}
 }
 
 func (r *Regexp) String() string {

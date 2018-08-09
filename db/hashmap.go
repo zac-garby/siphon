@@ -16,19 +16,27 @@ type Hashmap struct {
 
 	// keys stores the original keys which generated the hashes.
 	keys map[string]Item
+
+	keyType Type
+	valType Type
 }
 
 // NewHashmap makes a new empty Hashmap
-func NewHashmap() *Hashmap {
+func NewHashmap(keyType, valType Type) *Hashmap {
 	return &Hashmap{
-		data: make(map[string]Item),
-		keys: make(map[string]Item),
+		data:    make(map[string]Item),
+		keys:    make(map[string]Item),
+		keyType: keyType,
+		valType: valType,
 	}
 }
 
 // Type returns the type of the Item
-func (h *Hashmap) Type() string {
-	return TypeHashmap
+func (h *Hashmap) Type() Type {
+	return &HashmapType{
+		KeyType: h.keyType,
+		ValType: h.valType,
+	}
 }
 
 func (h *Hashmap) String() string {
@@ -62,6 +70,10 @@ func (h *Hashmap) String() string {
 
 // GetKey gets the given key from the hashmap
 func (h *Hashmap) GetKey(key Item) (result Item, status string) {
+	if !key.Type().Equals(h.keyType) {
+		return nil, StatusType
+	}
+
 	hash, err := structhash.Hash(key, 1)
 	if err != nil {
 		return nil, StatusError
@@ -77,6 +89,14 @@ func (h *Hashmap) GetKey(key Item) (result Item, status string) {
 
 // SetKey sets the given key in the hashmap to a value
 func (h *Hashmap) SetKey(key Item, to Item) (status string) {
+	if !key.Type().Equals(h.keyType) {
+		return StatusType
+	}
+
+	if !to.Type().Equals(h.valType) {
+		return StatusType
+	}
+
 	hash, err := structhash.Hash(key, 1)
 	if err != nil {
 		return StatusError

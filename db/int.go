@@ -17,8 +17,8 @@ func NewInt(val int64) *Int {
 }
 
 // Type returns the type of an item.
-func (i *Int) Type() string {
-	return TypeInt
+func (i *Int) Type() Type {
+	return &IntType{}
 }
 
 func (i *Int) String() string {
@@ -75,8 +75,8 @@ func NewInt32(val int32) *Int32 {
 }
 
 // Type returns the type of an item.
-func (i *Int32) Type() string {
-	return TypeInt
+func (i *Int32) Type() Type {
+	return &IntType{}
 }
 
 func (i *Int32) String() string {
@@ -133,8 +133,8 @@ func NewInt16(val int16) *Int16 {
 }
 
 // Type returns the type of an item.
-func (i *Int16) Type() string {
-	return TypeInt
+func (i *Int16) Type() Type {
+	return &IntType{}
 }
 
 func (i *Int16) String() string {
@@ -191,8 +191,8 @@ func NewInt8(val int8) *Int8 {
 }
 
 // Type returns the type of an item.
-func (i *Int8) Type() string {
-	return TypeInt
+func (i *Int8) Type() Type {
+	return &IntType{}
 }
 
 func (i *Int8) String() string {

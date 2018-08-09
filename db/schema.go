@@ -62,52 +62,95 @@ type SchemaStruct struct {
 }
 
 // MakeZeroValue makes a new Item which has the zero value of the
-// given schema type.
-func MakeZeroValue(t *SchemaType) Item {
-	if id := t.Ident; id != "" {
-		return makeIdentZeroValue(id)
-	} else if li := t.List; li != nil {
-		return NewList()
-	} else if hm := t.Hashmap; hm != nil {
-		return NewHashmap()
-	}
+// given type.
+func MakeZeroValue(t Type) Item {
+	switch ty := t.(type) {
+	case *ListType:
+		return NewList(ty.ElemType)
 
-	return nil
-}
+	case *HashmapType:
+		return NewHashmap(ty.KeyType, ty.ValType)
 
-func makeIdentZeroValue(id string) Item {
-	switch id {
-	case "float":
+	case *FloatType:
 		return NewFloat(0)
-	case "float32":
+	case *Float32Type:
 		return NewFloat32(0)
 
-	case "int":
+	case *IntType:
 		return NewInt(0)
-	case "int32":
+	case *Int32Type:
 		return NewInt32(0)
-	case "int16":
+	case *Int16Type:
 		return NewInt16(0)
-	case "int8":
+	case *Int8Type:
 		return NewInt8(0)
 
-	case "uint":
+	case *UintType:
 		return NewUint(0)
-	case "uint32":
+	case *Uint32Type:
 		return NewUint32(0)
-	case "uint16":
+	case *Uint16Type:
 		return NewUint16(0)
-	case "uint8":
+	case *Uint8Type:
 		return NewUint8(0)
 
-	case "string":
+	case *StringType:
 		return NewString("")
-	case "bool":
+	case *BoolType:
 		return NewBool(false)
-	case "regexp":
+	case *RegexpType:
 		return NewRegexp("")
 
 	default:
 		return nil
 	}
+}
+
+// GetActualType takes a parsed schema type and returns an actual
+// Type instance.
+func GetActualType(st *SchemaType) Type {
+	if li := st.List; li != nil {
+		return &ListType{
+			ElemType: GetActualType(li),
+		}
+	} else if hm := st.Hashmap; hm != nil {
+		return &HashmapType{
+			KeyType: GetActualType(hm.KeyType),
+			ValType: GetActualType(hm.ValueType),
+		}
+	}
+
+	switch id := st.Ident; id {
+	case "float":
+		return &FloatType{}
+	case "float32":
+		return &Float32Type{}
+
+	case "int":
+		return &IntType{}
+	case "int32":
+		return &Int32Type{}
+	case "int16":
+		return &Int16Type{}
+	case "int8":
+		return &Int8Type{}
+
+	case "uint":
+		return &UintType{}
+	case "uint32":
+		return &Uint32Type{}
+	case "uint16":
+		return &Uint16Type{}
+	case "uint8":
+		return &Uint8Type{}
+
+	case "string":
+		return &StringType{}
+	case "bool":
+		return &BoolType{}
+	case "regexp":
+		return &RegexpType{}
+	}
+
+	return nil
 }
