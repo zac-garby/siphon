@@ -1,7 +1,7 @@
 package server
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/Zac-Garby/db/db"
@@ -35,12 +35,12 @@ func NewServer(addr, schema string) (*Server, error) {
 // Listen starts listening on the given address.
 func (s *Server) Listen() error {
 	r := mux.NewRouter()
-	r.HandleFunc("/json", handleJSONSelector)
+	r.HandleFunc("/json", s.handleJSONSelector)
 
 	return http.ListenAndServe(s.Addr, r)
 }
 
-func handleJSONSelector(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleJSONSelector(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,23 +51,32 @@ func handleJSONSelector(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var (
-		selector = r.Form["selector"][0]
-		parsed   = &db.Selector{}
-		err      = db.SelectorParser.ParseString(selector, parsed)
-	)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	bytes, err := json.Marshal(parsed)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	res, status := s.Database.QueryString(r.Form["selector"][0])
+	if status != db.StatusOK {
+		errorMessage(w, status)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/json")
-	w.Write(bytes)
+	fmt.Fprint(w, res.JSON())
+}
+
+func errorMessage(w http.ResponseWriter, status string) {
+	w.Header().Set("Content-Type", "text/json")
+	var msg string
+	switch status {
+	case db.StatusError:
+		msg = "unknown error"
+	case db.StatusIndex:
+		msg = "invalid index or key"
+	case db.StatusNOOP:
+		msg = "invalid operation"
+	case db.StatusNoType:
+		msg = "unknown type"
+	case db.StatusType:
+		msg = "invalid type"
+	default:
+		msg = "unknown status code: " + status
+	}
+	http.Error(w, fmt.Sprintf(`{"error": "%s"}`, msg), http.StatusInternalServerError)
 }
