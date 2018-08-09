@@ -1,5 +1,7 @@
 package db
 
+import "fmt"
+
 // A DB stores all the information about a database, and the data inside
 // it. A DB is created from a Schema.
 type DB struct {
@@ -9,7 +11,7 @@ type DB struct {
 
 // MakeDB makes a new database from a Schema, with all data set to its
 // initial zero value.
-func MakeDB(schema *Schema) (db *DB, status string) {
+func MakeDB(schema *Schema) (db *DB, err error) {
 	structs := make(map[string]*StructType)
 
 	for _, section := range schema.Sections {
@@ -27,7 +29,7 @@ func MakeDB(schema *Schema) (db *DB, status string) {
 		for _, field := range secStruct.Fields {
 			ty := GetActualType(field.Type, structs)
 			if ty == nil {
-				return nil, StatusNoType
+				return nil, fmt.Errorf("db init: type '%s' does not exist", field.Type.Ident)
 			}
 			str.Fields[field.Name] = ty
 		}
@@ -43,7 +45,7 @@ func MakeDB(schema *Schema) (db *DB, status string) {
 
 		ty := GetActualType(field.Type, structs)
 		if ty == nil {
-			return nil, StatusNoType
+			return nil, fmt.Errorf("db init: type '%s' does not exist", field.Type.Ident)
 		}
 		fields[field.Name] = ty
 	}
@@ -55,7 +57,7 @@ func MakeDB(schema *Schema) (db *DB, status string) {
 
 	return &DB{
 		data: NewStruct(structType),
-	}, StatusOK
+	}, nil
 }
 
 // Query queries a database with a selector.

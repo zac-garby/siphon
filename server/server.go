@@ -10,7 +10,26 @@ import (
 
 // A Server listens for query requests over HTTP and manages a database instance.
 type Server struct {
-	Addr string
+	Addr     string
+	Database *db.DB
+}
+
+// NewServer makes a new server, initialising a database from the schema string.
+func NewServer(addr, schema string) (*Server, error) {
+	sch := &db.Schema{}
+	if err := db.SchemaParser.ParseString(schema, sch); err != nil {
+		return nil, err
+	}
+
+	d, err := db.MakeDB(sch)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Server{
+		Addr:     addr,
+		Database: d,
+	}, nil
 }
 
 // Listen starts listening on the given address.
