@@ -107,3 +107,13 @@ func (h *Hashmap) SetKey(key Item, to Item) (status string) {
 
 	return StatusOK
 }
+
+// GetField gets the given field from the hashmap
+func (h *Hashmap) GetField(key string) (result Item, status string) {
+	return h.GetKey(NewString(key))
+}
+
+// SetField sets the given field in the hashmap to a value
+func (h *Hashmap) SetField(key string, to Item) (status string) {
+	return h.SetKey(NewString(key), to)
+}
