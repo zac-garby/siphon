@@ -24,7 +24,7 @@ func (s *String) Type() Type {
 }
 
 func (s *String) String() string {
-	return s.value
+	return "\"" + s.value + "\""
 }
 
 // Compare compares an item with another item
