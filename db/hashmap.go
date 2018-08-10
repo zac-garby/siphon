@@ -147,3 +147,48 @@ func (h *Hashmap) GetField(key string) (result Item, status string) {
 func (h *Hashmap) SetField(key string, to Item) (status string) {
 	return h.SetKey(NewString(key), to)
 }
+
+// Filter filters the hashmap, returning a new hashmap where only the
+// filtered key:val pairs are present.
+func (h *Hashmap) Filter(field string, kind Comparison, other Item) (result Item, status string) {
+	result = &Hashmap{
+		keyType: h.keyType,
+		valType: h.valType,
+		data:    make(map[string]Item, len(h.data)/2), // initialise with capacity as len()/2
+		keys:    make(map[string]Item, len(h.keys)/2),
+	}
+
+	for hash, val := range h.data {
+		var (
+			key       = h.keys[hash]
+			predicate bool
+		)
+
+		if field == "" {
+			pred, status := val.Compare(kind, other)
+			if status != StatusOK {
+				return nil, status
+			}
+
+			predicate = pred
+		} else {
+			fval, status := val.GetField(field)
+			if status != StatusOK {
+				return nil, status
+			}
+
+			pred, status := fval.Compare(kind, other)
+			if status != StatusOK {
+				return nil, status
+			}
+
+			predicate = pred
+		}
+
+		if predicate {
+			result.SetKey(key, val)
+		}
+	}
+
+	return result, StatusOK
+}
