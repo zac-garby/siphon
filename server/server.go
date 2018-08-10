@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -41,13 +42,17 @@ func (s *Server) Listen() error {
 }
 
 func (s *Server) handleJSONSelector(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/json")
+
 	if err := r.ParseForm(); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, err.Error())
 		return
 	}
 
 	if len(r.Form["selector"]) != 1 {
-		http.Error(w, "only one form value expected for the selector", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, "only one form value expected for the selector")
 		return
 	}
 
@@ -57,12 +62,10 @@ func (s *Server) handleJSONSelector(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/json")
 	fmt.Fprint(w, res.JSON())
 }
 
 func errorMessage(w http.ResponseWriter, status string) {
-	w.Header().Set("Content-Type", "text/json")
 	var msg string
 	switch status {
 	case db.StatusError:
@@ -76,7 +79,18 @@ func errorMessage(w http.ResponseWriter, status string) {
 	case db.StatusType:
 		msg = "invalid type"
 	default:
-		msg = "unknown status code: " + status
+		msg = status
 	}
-	http.Error(w, fmt.Sprintf(`{"error": "%s"}`, msg), http.StatusInternalServerError)
+	w.WriteHeader(http.StatusInternalServerError)
+
+	bytes, err := json.Marshal(map[string]string{
+		"err": msg,
+	})
+
+	if err != nil {
+		fmt.Fprint(w, `{"err": "couldn't convert error message to JSON"}`)
+		return
+	}
+
+	w.Write(bytes)
 }
