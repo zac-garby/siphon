@@ -12,7 +12,7 @@ var selectorLexer = lexer.Must(lexer.Regexp(`(?m)(\s+)` +
 	`|(?P<Number>\d+(?:\.\d+)?)` +
 	`|(?P<String>"(?:\\.|[^"])*"|'(?:\\.|[^'])*')` +
 	`|(?P<Regexp>/(?:\\.|[^/])+/)` +
-	`|(?P<Comparison>(?:=|!=|>|>=|<|<=|~))` +
+	`|(?P<Comparison>(?:=|!=|>=?|<=?|~))` +
 	`|(?P<Punctuation>[\.\[\]])`,
 ))
 
@@ -61,7 +61,7 @@ type SelectorFilter struct {
 // A SelectorFilterComparison filters a clause based on whether an attribute of
 // a value is a certain thing.
 type SelectorFilterComparison struct {
-	Ident      string           `@Ident`
+	Ident      string           `[ @Ident ]`
 	Comparison string           `@Comparison`
 	Literal    *SelectorLiteral `@@`
 }

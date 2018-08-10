@@ -67,8 +67,15 @@ func (l *List) JSON() string {
 	return str.String()
 }
 
-// GetIndex returns the item at the given index.
-func (l *List) GetIndex(index int) (result Item, status string) {
+// GetKey returns the item at the given key, provided the key is an integer.
+func (l *List) GetKey(key Item) (result Item, status string) {
+	val, ok := castNumeric(key)
+	if !ok {
+		return nil, StatusType
+	}
+
+	index := int(val)
+
 	if index < 0 || index >= len(l.value) {
 		return nil, StatusIndex
 	}
@@ -76,14 +83,62 @@ func (l *List) GetIndex(index int) (result Item, status string) {
 	return l.value[index], StatusOK
 }
 
-// SetIndex sets the item at the given index to something.
-func (l *List) SetIndex(index int, to Item) (status string) {
+// SetKey sets the item at the given key to something, provided the key is
+// an integer.
+func (l *List) SetKey(key Item, to Item) (status string) {
+	val, ok := castNumeric(key)
+	if !ok {
+		return StatusType
+	}
+
+	index := int(val)
+
 	if index < 0 || index >= len(l.value) {
 		return StatusIndex
 	}
 
 	l.value[index] = to
 	return StatusOK
+}
+
+// Filter returns a new list with all members of l which pass through the
+// filter.
+func (l *List) Filter(field string, kind Comparison, other Item) (result Item, status string) {
+	result = &List{
+		valType: l.valType,
+		value:   make([]Item, 0, len(l.value)/2), // initialise with capacity as len()/2
+	}
+
+	for _, i := range l.value {
+		var predicate bool
+
+		if field == "" {
+			pred, status := i.Compare(kind, other)
+			if status != StatusOK {
+				return nil, status
+			}
+
+			predicate = pred
+		} else {
+			val, status := i.GetField(field)
+			if status != StatusOK {
+				return nil, status
+			}
+
+			pred, status := val.Compare(kind, other)
+			if status != StatusOK {
+				return nil, status
+			}
+
+			predicate = pred
+		}
+
+		if predicate {
+			result.Append(i)
+		}
+	}
+
+	return result, StatusOK
 }
 
 // Append appends an item to the list.

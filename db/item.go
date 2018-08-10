@@ -16,6 +16,27 @@ const (
 	RegexpMatch
 )
 
+func stringToComparison(str string) (cmp Comparison, ok bool) {
+	switch str {
+	case "=":
+		return Equal, true
+	case "!=":
+		return NotEqual, true
+	case "<":
+		return Less, true
+	case ">":
+		return More, true
+	case "<=":
+		return LessOrEqual, true
+	case ">=":
+		return MoreOrEqual, true
+	case "~":
+		return RegexpMatch, true
+	}
+
+	return -1, false
+}
+
 const (
 	// StatusOK means that the operation has been carried out successfully
 	StatusOK = "OK"
@@ -45,13 +66,12 @@ type Item interface {
 	String() string
 	JSON() string
 
-	GetIndex(index int) (result Item, status string)
 	GetKey(key Item) (result Item, status string)
 	GetField(key string) (result Item, status string)
-	SetIndex(index int, to Item) (status string)
 	SetKey(key Item, to Item) (status string)
 	SetField(key string, to Item) (status string)
 	Compare(kind Comparison, other Item) (result bool, status string)
+	Filter(field string, kind Comparison, other Item) (result Item, status string)
 	Append(items ...Item) (status string)
 	Prepend(items ...Item) (status string)
 }
@@ -84,6 +104,10 @@ func (i *itemDefaults) SetField(key string, to Item) (status string) {
 
 func (i *itemDefaults) Compare(kind Comparison, other Item) (result bool, status string) {
 	return false, StatusNOOP
+}
+
+func (i *itemDefaults) Filter(field string, kind Comparison, other Item) (result Item, status string) {
+	return nil, StatusNOOP
 }
 
 func (i *itemDefaults) Append(items ...Item) (status string) {

@@ -76,7 +76,48 @@ func (d *DB) Query(selector *Selector) (result Item, status string) {
 
 // QuerySelectorClause queries an item
 func (d *DB) QuerySelectorClause(item Item, clause *SelectorClause) (result Item, status string) {
-	return item.GetField(clause.Ident)
+	result, status = item.GetField(clause.Ident)
+	if status != StatusOK {
+		return nil, status
+	}
+
+	for _, filter := range clause.Filters {
+		if cmp := filter.Comparison; cmp != nil {
+			field := cmp.Ident
+
+			comparison, ok := stringToComparison(cmp.Comparison)
+			if !ok {
+				return nil, StatusNOOP
+			}
+
+			other := selectorLiteralToItem(cmp.Literal)
+
+			result, status = result.Filter(field, comparison, other)
+			if status != StatusOK {
+				return nil, status
+			}
+		} else if idx := filter.Index; idx != nil {
+			key := selectorLiteralToItem(idx)
+
+			result, status = result.GetKey(key)
+			if status != StatusOK {
+				return nil, status
+			}
+		}
+	}
+
+	return result, StatusOK
+}
+
+func selectorLiteralToItem(lit *SelectorLiteral) Item {
+	if num := lit.Number; num != nil {
+		return NewFloat(*num)
+	} else if str := lit.String; str != nil {
+		return NewString(*str)
+	} else if reg := lit.Regexp; reg != nil {
+		return NewRegexp(*reg)
+	}
+	return nil
 }
 
 // QueryString queries a database, parsing the string as
