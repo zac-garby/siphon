@@ -66,6 +66,7 @@ type Item interface {
 	String() string
 	JSON() string
 
+	Set(val interface{}) (status string)
 	GetKey(key Item) (result Item, status string)
 	GetField(key string) (result Item, status string)
 	SetKey(key Item, to Item) (status string)
@@ -77,6 +78,10 @@ type Item interface {
 }
 
 type itemDefaults struct{}
+
+func (i *itemDefaults) Set(val interface{}) (status string) {
+	return StatusNOOP
+}
 
 func (i *itemDefaults) GetIndex(index int) (result Item, status string) {
 	return nil, StatusNOOP

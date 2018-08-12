@@ -70,6 +70,38 @@ func (s *Struct) JSON() string {
 	return str.String()
 }
 
+// Set sets the value of the item to the given value
+func (s *Struct) Set(val interface{}) (status string) {
+	hval, ok := val.(map[string]interface{})
+	if !ok {
+		return StatusType
+	}
+
+	if len(hval) != len(s.value) {
+		return StatusType
+	}
+
+	newMap := make(map[string]Item, len(hval))
+
+	for k, ty := range s.ty.Fields {
+		newVal := MakeZeroValue(ty)
+		newInterVal, ok := hval[k]
+		if !ok {
+			return StatusType
+		}
+
+		if status := newVal.Set(newInterVal); status != StatusOK {
+			return status
+		}
+
+		newMap[k] = newVal
+	}
+
+	s.value = newMap
+
+	return StatusOK
+}
+
 // GetField returns the field named 'key' in the struct.
 func (s *Struct) GetField(key string) (result Item, status string) {
 	val, ok := s.value[key]

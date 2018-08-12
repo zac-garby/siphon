@@ -30,6 +30,18 @@ func (i *Int) JSON() string {
 	return i.String()
 }
 
+// Set sets the value of the item to the given value
+func (i *Int) Set(val interface{}) (status string) {
+	ival, ok := val.(float64)
+	if !ok {
+		return StatusType
+	}
+
+	i.value = int64(ival)
+
+	return StatusOK
+}
+
 // Compare compares two items
 func (i *Int) Compare(kind Comparison, other Item) (result bool, status string) {
 	oval, ok := castNumeric(other)
@@ -91,6 +103,18 @@ func (i *Int32) String() string {
 // JSON returns a JSON representation of the item
 func (i *Int32) JSON() string {
 	return i.String()
+}
+
+// Set sets the value of the item to the given value
+func (i *Int32) Set(val interface{}) (status string) {
+	ival, ok := val.(float64)
+	if !ok {
+		return StatusType
+	}
+
+	i.value = int32(ival)
+
+	return StatusOK
 }
 
 // Compare compares two items
@@ -156,6 +180,18 @@ func (i *Int16) JSON() string {
 	return i.String()
 }
 
+// Set sets the value of the item to the given value
+func (i *Int16) Set(val interface{}) (status string) {
+	ival, ok := val.(float64)
+	if !ok {
+		return StatusType
+	}
+
+	i.value = int16(ival)
+
+	return StatusOK
+}
+
 // Compare compares two items
 func (i *Int16) Compare(kind Comparison, other Item) (result bool, status string) {
 	oval, ok := castNumeric(other)
@@ -217,6 +253,18 @@ func (i *Int8) String() string {
 // JSON returns a JSON representation of the item
 func (i *Int8) JSON() string {
 	return i.String()
+}
+
+// Set sets the value of the item to the given value
+func (i *Int8) Set(val interface{}) (status string) {
+	ival, ok := val.(float64)
+	if !ok {
+		return StatusType
+	}
+
+	i.value = int8(ival)
+
+	return StatusOK
 }
 
 // Compare compares two items

@@ -30,6 +30,18 @@ func (b *Bool) JSON() string {
 	return b.String()
 }
 
+// Set sets the value of the item to the given value
+func (b *Bool) Set(val interface{}) (status string) {
+	bval, ok := val.(bool)
+	if !ok {
+		return StatusType
+	}
+
+	b.value = bval
+
+	return StatusOK
+}
+
 // Compare compares two items
 func (b *Bool) Compare(kind Comparison, other Item) (result bool, status string) {
 	ob, ok := other.(*Bool)

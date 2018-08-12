@@ -32,6 +32,18 @@ func (s *String) JSON() string {
 	return s.String()
 }
 
+// Set sets the value of the item to the given value
+func (s *String) Set(val interface{}) (status string) {
+	sval, ok := val.(string)
+	if !ok {
+		return StatusType
+	}
+
+	s.value = sval
+
+	return StatusOK
+}
+
 // Compare compares an item with another item
 func (s *String) Compare(kind Comparison, other Item) (result bool, status string) {
 	if kind == RegexpMatch {

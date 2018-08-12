@@ -1,6 +1,8 @@
 package db
 
-import "strings"
+import (
+	"strings"
+)
 
 // A List stores an ordered sequence of items.
 type List struct {
@@ -65,6 +67,29 @@ func (l *List) JSON() string {
 	str.WriteByte(']')
 
 	return str.String()
+}
+
+// Set sets the value of the item to the given value
+func (l *List) Set(val interface{}) (status string) {
+	slice, ok := val.([]interface{})
+	if !ok {
+		return StatusType
+	}
+
+	newList := make([]Item, len(slice))
+
+	for i, item := range slice {
+		newItem := MakeZeroValue(l.valType)
+		if status := newItem.Set(item); status != StatusOK {
+			return status
+		}
+
+		newList[i] = newItem
+	}
+
+	l.value = newList
+
+	return StatusOK
 }
 
 // GetKey returns the item at the given key, provided the key is an integer.

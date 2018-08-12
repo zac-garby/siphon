@@ -27,3 +27,15 @@ func (r *Regexp) String() string {
 func (r *Regexp) JSON() string {
 	return "\"" + r.value + "\""
 }
+
+// Set sets the value of the item to the given value
+func (r *Regexp) Set(val interface{}) (status string) {
+	sval, ok := val.(string)
+	if !ok {
+		return StatusType
+	}
+
+	r.value = sval
+
+	return StatusOK
+}

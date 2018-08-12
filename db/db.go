@@ -9,6 +9,9 @@ type DB struct {
 	structs map[string]*StructType
 }
 
+// JSON represents JSON data.
+type JSON interface{}
+
 // MakeDB makes a new database from a Schema, with all data set to its
 // initial zero value.
 func MakeDB(schema *Schema) (db *DB, err error) {
@@ -129,4 +132,14 @@ func (d *DB) QueryString(str string) (result Item, status string) {
 	}
 
 	return d.Query(selector)
+}
+
+// Set sets the value of the selected item(s) to the given value.
+func (d *DB) Set(selector *Selector, to JSON) (status string) {
+	_, status = d.Query(selector)
+	if status != StatusOK {
+		return status
+	}
+
+	return StatusOK
 }

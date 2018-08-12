@@ -33,6 +33,18 @@ func (f *Float) JSON() string {
 	return f.String()
 }
 
+// Set sets the value of the item to the given value
+func (f *Float) Set(val interface{}) (status string) {
+	fval, ok := val.(float64)
+	if !ok {
+		return StatusType
+	}
+
+	f.value = fval
+
+	return StatusOK
+}
+
 // Compare compares two items
 func (f *Float) Compare(kind Comparison, other Item) (result bool, status string) {
 	oval, ok := castNumeric(other)
@@ -92,6 +104,18 @@ func (f *Float32) String() string {
 // JSON returns a JSON representation of the item
 func (f *Float32) JSON() string {
 	return f.String()
+}
+
+// Set sets the value of the item to the given value
+func (f *Float32) Set(val interface{}) (status string) {
+	fval, ok := val.(float64)
+	if !ok {
+		return StatusType
+	}
+
+	f.value = float32(fval)
+
+	return StatusOK
 }
 
 // Compare compares two items

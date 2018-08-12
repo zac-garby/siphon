@@ -98,6 +98,35 @@ func (h *Hashmap) JSON() string {
 	return str.String()
 }
 
+// Set sets the value of the item to the given value
+func (h *Hashmap) Set(val interface{}) (status string) {
+	if !h.keyType.Equals(&StringType{}) {
+		// Set can only be used on string:any hashmaps, due to the syntax of JSON
+		return StatusNOOP
+	}
+
+	hval, ok := val.(map[string]interface{})
+	if !ok {
+		return StatusType
+	}
+
+	h.data = make(map[string]Item, len(hval))
+	h.keys = make(map[string]Item, len(hval))
+
+	for k, v := range hval {
+		newVal := MakeZeroValue(h.valType)
+		if status := newVal.Set(v); status != StatusOK {
+			return status
+		}
+
+		if status := h.SetKey(&String{value: k}, newVal); status != StatusOK {
+			return status
+		}
+	}
+
+	return StatusOK
+}
+
 // GetKey gets the given key from the hashmap
 func (h *Hashmap) GetKey(key Item) (result Item, status string) {
 	if !key.Type().Equals(h.keyType) {
