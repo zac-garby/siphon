@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/Zac-Garby/db/db"
@@ -36,23 +37,27 @@ func NewServer(addr, schema string) (*Server, error) {
 // Listen starts listening on the given address.
 func (s *Server) Listen() error {
 	r := mux.NewRouter()
-	r.HandleFunc("/json", s.handleJSONSelector)
+	r.HandleFunc("/json", s.handleJSON)
+	r.HandleFunc("/set", s.handleSet)
 
 	return http.ListenAndServe(s.Addr, r)
 }
 
-func (s *Server) handleJSONSelector(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleJSON(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/json")
 
+	if r.Method != "GET" {
+		errorMessage(w, "only GET is supported for /json")
+		return
+	}
+
 	if err := r.ParseForm(); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+		errorMessage(w, err.Error())
 		return
 	}
 
 	if len(r.Form["selector"]) != 1 {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "only one form value expected for the selector")
+		errorMessage(w, "only one form value expected for the selector")
 		return
 	}
 
@@ -63,6 +68,55 @@ func (s *Server) handleJSONSelector(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprint(w, res.JSON())
+}
+
+func (s *Server) handleSet(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/json")
+
+	if r.Method != "POST" {
+		errorMessage(w, "only POST is supported for /set")
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if len(r.Form["selector"]) != 1 {
+		errorMessage(w, "only one form value expected for the selector")
+		return
+	}
+
+	if r.Body == nil {
+		errorMessage(w, "expected a request body")
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		errorMessage(w, "could not read request body")
+		return
+	}
+
+	item, status := s.Database.QueryString(r.Form["selector"][0])
+	if status != db.StatusOK {
+		errorMessage(w, status)
+		return
+	}
+
+	var val interface{}
+	if err := json.Unmarshal(body, &val); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if status = item.Set(val); status != db.StatusOK {
+		errorMessage(w, status)
+		return
+	}
+
+	fmt.Fprint(w, item.JSON())
 }
 
 func errorMessage(w http.ResponseWriter, status string) {
