@@ -31,30 +31,30 @@ func (b *Bool) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (b *Bool) Set(val interface{}) (status string) {
+func (b *Bool) Set(val interface{}) (err error) {
 	bval, ok := val.(bool)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a boolean value")
 	}
 
 	b.value = bval
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares two items
-func (b *Bool) Compare(kind Comparison, other Item) (result bool, status string) {
+func (b *Bool) Compare(kind Comparison, other Item) (result bool, err error) {
 	ob, ok := other.(*Bool)
 	if !ok {
-		return false, StatusOK
+		return false, nil
 	}
 
 	switch kind {
 	case Equal:
-		return b.value == ob.value, StatusOK
+		return b.value == ob.value, nil
 	case NotEqual:
-		return b.value != ob.value, StatusOK
+		return b.value != ob.value, nil
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only = and != are supported on booleans")
 	}
 }

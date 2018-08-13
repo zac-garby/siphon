@@ -64,12 +64,12 @@ func MakeDB(schema *Schema) (db *DB, err error) {
 }
 
 // Query queries a database with a selector.
-func (d *DB) Query(selector *Selector) (result Item, status string) {
+func (d *DB) Query(selector *Selector) (result Item, err error) {
 	result = d.data
 
 	for _, clause := range selector.Clauses {
-		result, status = d.QuerySelectorClause(result, clause)
-		if status != StatusOK {
+		result, err = d.QuerySelectorClause(result, clause)
+		if err != nil {
 			return
 		}
 	}
@@ -78,10 +78,10 @@ func (d *DB) Query(selector *Selector) (result Item, status string) {
 }
 
 // QuerySelectorClause queries an item
-func (d *DB) QuerySelectorClause(item Item, clause *SelectorClause) (result Item, status string) {
-	result, status = item.GetField(clause.Ident)
-	if status != StatusOK {
-		return nil, status
+func (d *DB) QuerySelectorClause(item Item, clause *SelectorClause) (result Item, err error) {
+	result, err = item.GetField(clause.Ident)
+	if err != nil {
+		return nil, err
 	}
 
 	for _, filter := range clause.Filters {
@@ -90,26 +90,26 @@ func (d *DB) QuerySelectorClause(item Item, clause *SelectorClause) (result Item
 
 			comparison, ok := stringToComparison(cmp.Comparison)
 			if !ok {
-				return nil, StatusNOOP
+				return nil, newError(ErrNOOP, "invalid comparison operator: %s", cmp.Comparison)
 			}
 
 			other := selectorLiteralToItem(cmp.Literal)
 
-			result, status = result.Filter(field, comparison, other)
-			if status != StatusOK {
-				return nil, status
+			result, err = result.Filter(field, comparison, other)
+			if err != nil {
+				return nil, err
 			}
 		} else if idx := filter.Index; idx != nil {
 			key := selectorLiteralToItem(idx)
 
-			result, status = result.GetKey(key)
-			if status != StatusOK {
-				return nil, status
+			result, err = result.GetKey(key)
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
 
-	return result, StatusOK
+	return result, nil
 }
 
 func selectorLiteralToItem(lit *SelectorLiteral) Item {
@@ -125,21 +125,11 @@ func selectorLiteralToItem(lit *SelectorLiteral) Item {
 
 // QueryString queries a database, parsing the string as
 // as selector first.
-func (d *DB) QueryString(str string) (result Item, status string) {
+func (d *DB) QueryString(str string) (result Item, err error) {
 	selector := &Selector{}
 	if err := SelectorParser.ParseString(str, selector); err != nil {
-		return nil, err.Error()
+		return nil, err
 	}
 
 	return d.Query(selector)
-}
-
-// Set sets the value of the selected item(s) to the given value.
-func (d *DB) Set(selector *Selector, to JSON) (status string) {
-	_, status = d.Query(selector)
-	if status != StatusOK {
-		return status
-	}
-
-	return StatusOK
 }

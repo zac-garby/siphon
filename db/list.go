@@ -70,18 +70,18 @@ func (l *List) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (l *List) Set(val interface{}) (status string) {
+func (l *List) Set(val interface{}) (err error) {
 	slice, ok := val.([]interface{})
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a list value")
 	}
 
 	newList := make([]Item, len(slice))
 
 	for i, item := range slice {
 		newItem := MakeZeroValue(l.valType)
-		if status := newItem.Set(item); status != StatusOK {
-			return status
+		if err := newItem.Set(item); err != nil {
+			return err
 		}
 
 		newList[i] = newItem
@@ -89,46 +89,46 @@ func (l *List) Set(val interface{}) (status string) {
 
 	l.value = newList
 
-	return StatusOK
+	return nil
 }
 
 // GetKey returns the item at the given key, provided the key is an integer.
-func (l *List) GetKey(key Item) (result Item, status string) {
+func (l *List) GetKey(key Item) (result Item, err error) {
 	val, ok := castNumeric(key)
 	if !ok {
-		return nil, StatusType
+		return nil, newError(ErrType, "can only index a list with a numeric type")
 	}
 
 	index := int(val)
 
 	if index < 0 || index >= len(l.value) {
-		return nil, StatusIndex
+		return nil, newError(ErrIndex, "index out of bounds")
 	}
 
-	return l.value[index], StatusOK
+	return l.value[index], nil
 }
 
 // SetKey sets the item at the given key to something, provided the key is
 // an integer.
-func (l *List) SetKey(key Item, to Item) (status string) {
+func (l *List) SetKey(key Item, to Item) (err error) {
 	val, ok := castNumeric(key)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "can only index a list with a numeric type")
 	}
 
 	index := int(val)
 
 	if index < 0 || index >= len(l.value) {
-		return StatusIndex
+		return newError(ErrIndex, "index out of bounds")
 	}
 
 	l.value[index] = to
-	return StatusOK
+	return nil
 }
 
 // Filter returns a new list with all members of l which pass through the
 // filter.
-func (l *List) Filter(field string, kind Comparison, other Item) (result Item, status string) {
+func (l *List) Filter(field string, kind Comparison, other Item) (result Item, err error) {
 	result = &List{
 		valType: l.valType,
 		value:   make([]Item, 0, len(l.value)/2), // initialise with capacity as len()/2
@@ -138,21 +138,21 @@ func (l *List) Filter(field string, kind Comparison, other Item) (result Item, s
 		var predicate bool
 
 		if field == "" {
-			pred, status := i.Compare(kind, other)
-			if status != StatusOK {
-				return nil, status
+			pred, err := i.Compare(kind, other)
+			if err != nil {
+				return nil, err
 			}
 
 			predicate = pred
 		} else {
-			val, status := i.GetField(field)
-			if status != StatusOK {
-				return nil, status
+			val, err := i.GetField(field)
+			if err != nil {
+				return nil, err
 			}
 
-			pred, status := val.Compare(kind, other)
-			if status != StatusOK {
-				return nil, status
+			pred, err := val.Compare(kind, other)
+			if err != nil {
+				return nil, err
 			}
 
 			predicate = pred
@@ -163,18 +163,18 @@ func (l *List) Filter(field string, kind Comparison, other Item) (result Item, s
 		}
 	}
 
-	return result, StatusOK
+	return result, nil
 }
 
 // Append appends an item to the list.
-func (l *List) Append(items ...Item) (status string) {
+func (l *List) Append(items ...Item) (err error) {
 	l.value = append(l.value, items...)
-	return StatusOK
+	return nil
 }
 
 // Prepend pushes an item to the beginning of the list. They will remain in
 // the same order, so [1, 2, 3] prepend [4, 5, 6] will result in [4, 5, 6, 1, 2, 3].
-func (l *List) Prepend(items ...Item) (status string) {
+func (l *List) Prepend(items ...Item) (err error) {
 	l.value = append(items, l.value...)
-	return StatusOK
+	return nil
 }

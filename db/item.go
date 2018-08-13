@@ -37,24 +37,24 @@ func stringToComparison(str string) (cmp Comparison, ok bool) {
 	return -1, false
 }
 
+// ErrorType says what the cause of an error is
+type ErrorType string
+
 const (
-	// StatusOK means that the operation has been carried out successfully
-	StatusOK = "OK"
+	// ErrNOOP means that the operation cannot be performed on the type
+	ErrNOOP ErrorType = "no operation"
 
-	// StatusNOOP means that the operation cannot be performed on the type
-	StatusNOOP = "NOOP"
+	// ErrIndex means that an invalid index or key was requested
+	ErrIndex ErrorType = "index error"
 
-	// StatusIndex means that an invalid index or key was requested
-	StatusIndex = "IDX_ERR"
+	// ErrUnknown means that an unknown error has occurred
+	ErrUnknown ErrorType = "error"
 
-	// StatusError means that an unknown error has occurred
-	StatusError = "ERR"
+	// ErrType means that a type error has occurred
+	ErrType ErrorType = "invalid type"
 
-	// StatusType means that a type error has occurred
-	StatusType = "TYPE"
-
-	// StatusNoType means that an invalid type was specified in the schema
-	StatusNoType = "NO_TYPE"
+	// ErrNoType means that an invalid type was specified in the schema
+	ErrNoType ErrorType = "undefined type"
 )
 
 // An Item is any object in the database, such as a primitive number object or
@@ -66,59 +66,51 @@ type Item interface {
 	String() string
 	JSON() string
 
-	Set(val interface{}) (status string)
-	GetKey(key Item) (result Item, status string)
-	GetField(key string) (result Item, status string)
-	SetKey(key Item, to Item) (status string)
-	SetField(key string, to Item) (status string)
-	Compare(kind Comparison, other Item) (result bool, status string)
-	Filter(field string, kind Comparison, other Item) (result Item, status string)
-	Append(items ...Item) (status string)
-	Prepend(items ...Item) (status string)
+	Set(val interface{}) (err error)
+	GetKey(key Item) (result Item, err error)
+	GetField(key string) (result Item, err error)
+	SetKey(key Item, to Item) (err error)
+	SetField(key string, to Item) (err error)
+	Compare(kind Comparison, other Item) (result bool, err error)
+	Filter(field string, kind Comparison, other Item) (result Item, err error)
+	Append(items ...Item) (err error)
+	Prepend(items ...Item) (err error)
 }
 
 type itemDefaults struct{}
 
-func (i *itemDefaults) Set(val interface{}) (status string) {
-	return StatusNOOP
+func (i *itemDefaults) Set(val interface{}) (err error) {
+	return newError(ErrNOOP, "set not supported")
 }
 
-func (i *itemDefaults) GetIndex(index int) (result Item, status string) {
-	return nil, StatusNOOP
+func (i *itemDefaults) GetKey(key Item) (result Item, err error) {
+	return nil, newError(ErrNOOP, "getkey not supported")
 }
 
-func (i *itemDefaults) GetKey(key Item) (result Item, status string) {
-	return nil, StatusNOOP
+func (i *itemDefaults) GetField(key string) (result Item, err error) {
+	return nil, newError(ErrNOOP, "getfield not supported")
 }
 
-func (i *itemDefaults) GetField(key string) (result Item, status string) {
-	return nil, StatusNOOP
+func (i *itemDefaults) SetKey(key Item, to Item) (err error) {
+	return newError(ErrNOOP, "setkey not supported")
 }
 
-func (i *itemDefaults) SetIndex(index int, to Item) (status string) {
-	return StatusNOOP
+func (i *itemDefaults) SetField(key string, to Item) (err error) {
+	return newError(ErrNOOP, "setfield not supported")
 }
 
-func (i *itemDefaults) SetKey(key Item, to Item) (status string) {
-	return StatusNOOP
+func (i *itemDefaults) Compare(kind Comparison, other Item) (result bool, err error) {
+	return false, newError(ErrNOOP, "compare not supported")
 }
 
-func (i *itemDefaults) SetField(key string, to Item) (status string) {
-	return StatusNOOP
+func (i *itemDefaults) Filter(field string, kind Comparison, other Item) (result Item, err error) {
+	return nil, newError(ErrNOOP, "filter not supported")
 }
 
-func (i *itemDefaults) Compare(kind Comparison, other Item) (result bool, status string) {
-	return false, StatusNOOP
+func (i *itemDefaults) Append(items ...Item) (err error) {
+	return newError(ErrNOOP, "append not supported")
 }
 
-func (i *itemDefaults) Filter(field string, kind Comparison, other Item) (result Item, status string) {
-	return nil, StatusNOOP
-}
-
-func (i *itemDefaults) Append(items ...Item) (status string) {
-	return StatusNOOP
-}
-
-func (i *itemDefaults) Prepend(items ...Item) (status string) {
-	return StatusNOOP
+func (i *itemDefaults) Prepend(items ...Item) (err error) {
+	return newError(ErrNOOP, "prepend not supported")
 }

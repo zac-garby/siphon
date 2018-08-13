@@ -31,47 +31,47 @@ func (i *Uint) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (i *Uint) Set(val interface{}) (status string) {
+func (i *Uint) Set(val interface{}) (err error) {
 	fval, ok := val.(float64)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected an integer value")
 	}
 
 	i.value = uint64(fval)
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares two items
-func (i *Uint) Compare(kind Comparison, other Item) (result bool, status string) {
+func (i *Uint) Compare(kind Comparison, other Item) (result bool, err error) {
 	oval, ok := castNumeric(other)
 	if !ok {
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "can only compare uints with numeric types (ints, floats, uints, ...)")
 	}
 
 	sval, _ := castNumeric(i)
 
 	switch kind {
 	case Equal:
-		return sval == oval, StatusOK
+		return sval == oval, nil
 
 	case NotEqual:
-		return sval != oval, StatusOK
+		return sval != oval, nil
 
 	case Less:
-		return sval < oval, StatusOK
+		return sval < oval, nil
 
 	case More:
-		return sval > oval, StatusOK
+		return sval > oval, nil
 
 	case LessOrEqual:
-		return sval <= oval, StatusOK
+		return sval <= oval, nil
 
 	case MoreOrEqual:
-		return sval >= oval, StatusOK
+		return sval >= oval, nil
 
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only =, !=, <, >, <=, >= comparisons are supported on uints")
 	}
 }
 
@@ -106,47 +106,47 @@ func (i *Uint32) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (i *Uint32) Set(val interface{}) (status string) {
+func (i *Uint32) Set(val interface{}) (err error) {
 	fval, ok := val.(float64)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected an integer value")
 	}
 
 	i.value = uint32(fval)
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares two items
-func (i *Uint32) Compare(kind Comparison, other Item) (result bool, status string) {
+func (i *Uint32) Compare(kind Comparison, other Item) (result bool, err error) {
 	oval, ok := castNumeric(other)
 	if !ok {
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "can only compare uints with numeric types (ints, floats, uints, ...)")
 	}
 
 	sval, _ := castNumeric(i)
 
 	switch kind {
 	case Equal:
-		return sval == oval, StatusOK
+		return sval == oval, nil
 
 	case NotEqual:
-		return sval != oval, StatusOK
+		return sval != oval, nil
 
 	case Less:
-		return sval < oval, StatusOK
+		return sval < oval, nil
 
 	case More:
-		return sval > oval, StatusOK
+		return sval > oval, nil
 
 	case LessOrEqual:
-		return sval <= oval, StatusOK
+		return sval <= oval, nil
 
 	case MoreOrEqual:
-		return sval >= oval, StatusOK
+		return sval >= oval, nil
 
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only =, !=, <, >, <=, >= comparisons are supported on uints")
 	}
 }
 
@@ -181,47 +181,47 @@ func (i *Uint16) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (i *Uint16) Set(val interface{}) (status string) {
+func (i *Uint16) Set(val interface{}) (err error) {
 	fval, ok := val.(float64)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected an integer value")
 	}
 
 	i.value = uint16(fval)
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares two items
-func (i *Uint16) Compare(kind Comparison, other Item) (result bool, status string) {
+func (i *Uint16) Compare(kind Comparison, other Item) (result bool, err error) {
 	oval, ok := castNumeric(other)
 	if !ok {
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "can only compare uints with numeric types (ints, floats, uints, ...)")
 	}
 
 	sval, _ := castNumeric(i)
 
 	switch kind {
 	case Equal:
-		return sval == oval, StatusOK
+		return sval == oval, nil
 
 	case NotEqual:
-		return sval != oval, StatusOK
+		return sval != oval, nil
 
 	case Less:
-		return sval < oval, StatusOK
+		return sval < oval, nil
 
 	case More:
-		return sval > oval, StatusOK
+		return sval > oval, nil
 
 	case LessOrEqual:
-		return sval <= oval, StatusOK
+		return sval <= oval, nil
 
 	case MoreOrEqual:
-		return sval >= oval, StatusOK
+		return sval >= oval, nil
 
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only =, !=, <, >, <=, >= comparisons are supported on uints")
 	}
 }
 
@@ -256,46 +256,46 @@ func (i *Uint8) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (i *Uint8) Set(val interface{}) (status string) {
+func (i *Uint8) Set(val interface{}) (err error) {
 	fval, ok := val.(float64)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected an integer value")
 	}
 
 	i.value = uint8(fval)
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares two items
-func (i *Uint8) Compare(kind Comparison, other Item) (result bool, status string) {
+func (i *Uint8) Compare(kind Comparison, other Item) (result bool, err error) {
 	oval, ok := castNumeric(other)
 	if !ok {
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "can only compare uints with numeric types (ints, floats, uints, ...)")
 	}
 
 	sval, _ := castNumeric(i)
 
 	switch kind {
 	case Equal:
-		return sval == oval, StatusOK
+		return sval == oval, nil
 
 	case NotEqual:
-		return sval != oval, StatusOK
+		return sval != oval, nil
 
 	case Less:
-		return sval < oval, StatusOK
+		return sval < oval, nil
 
 	case More:
-		return sval > oval, StatusOK
+		return sval > oval, nil
 
 	case LessOrEqual:
-		return sval <= oval, StatusOK
+		return sval <= oval, nil
 
 	case MoreOrEqual:
-		return sval >= oval, StatusOK
+		return sval >= oval, nil
 
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only =, !=, <, >, <=, >= comparisons are supported on uints")
 	}
 }

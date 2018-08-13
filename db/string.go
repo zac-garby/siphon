@@ -33,74 +33,74 @@ func (s *String) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (s *String) Set(val interface{}) (status string) {
+func (s *String) Set(val interface{}) (err error) {
 	sval, ok := val.(string)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a string value")
 	}
 
 	s.value = sval
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares an item with another item
-func (s *String) Compare(kind Comparison, other Item) (result bool, status string) {
+func (s *String) Compare(kind Comparison, other Item) (result bool, err error) {
 	if kind == RegexpMatch {
 		or, ok := other.(*Regexp)
 		if !ok {
-			return false, StatusNOOP
+			return false, newError(ErrNOOP, "the right hand argument to ~ must be a regexp")
 		}
 
 		reg, err := regexp.Compile(or.value)
 		if err != nil {
-			return false, StatusError
+			return false, newError(ErrUnknown, "regexp could not be compiled")
 		}
 
-		return reg.MatchString(s.value), StatusOK
+		return reg.MatchString(s.value), nil
 	}
 
 	os, ok := other.(*String)
 	if !ok {
-		return false, StatusOK
+		return false, nil
 	}
 
 	switch kind {
 	case Equal:
-		return s.value == os.value, StatusOK
+		return s.value == os.value, nil
 
 	case NotEqual:
-		return s.value != os.value, StatusOK
+		return s.value != os.value, nil
 
 	case Less:
 		if other.Type().Equals(&StringType{}) {
-			return false, StatusOK
+			return false, nil
 		}
 
-		return s.value < os.value, StatusOK
+		return s.value < os.value, nil
 
 	case More:
 		if other.Type().Equals(&StringType{}) {
-			return false, StatusOK
+			return false, nil
 		}
 
-		return s.value > os.value, StatusOK
+		return s.value > os.value, nil
 
 	case LessOrEqual:
 		if other.Type().Equals(&StringType{}) {
-			return false, StatusOK
+			return false, nil
 		}
 
-		return s.value <= os.value, StatusOK
+		return s.value <= os.value, nil
 
 	case MoreOrEqual:
 		if other.Type().Equals(&StringType{}) {
-			return false, StatusOK
+			return false, nil
 		}
 
-		return s.value >= os.value, StatusOK
+		return s.value >= os.value, nil
 
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only =, !=, <, >, <=, >=, and ~ comparisons are supported on strings")
 	}
 }

@@ -34,45 +34,45 @@ func (f *Float) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (f *Float) Set(val interface{}) (status string) {
+func (f *Float) Set(val interface{}) (err error) {
 	fval, ok := val.(float64)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a float value")
 	}
 
 	f.value = fval
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares two items
-func (f *Float) Compare(kind Comparison, other Item) (result bool, status string) {
+func (f *Float) Compare(kind Comparison, other Item) (result bool, err error) {
 	oval, ok := castNumeric(other)
 	if !ok {
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "can only compare floats with numeric types (ints, floats, uints, ...)")
 	}
 
 	switch kind {
 	case Equal:
-		return f.value == oval, StatusOK
+		return f.value == oval, nil
 
 	case NotEqual:
-		return f.value != oval, StatusOK
+		return f.value != oval, nil
 
 	case Less:
-		return f.value < oval, StatusOK
+		return f.value < oval, nil
 
 	case More:
-		return f.value > oval, StatusOK
+		return f.value > oval, nil
 
 	case LessOrEqual:
-		return f.value <= oval, StatusOK
+		return f.value <= oval, nil
 
 	case MoreOrEqual:
-		return f.value >= oval, StatusOK
+		return f.value >= oval, nil
 
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only =, !=, <, >, <=, >= comparisons are supported on floats")
 	}
 }
 
@@ -107,47 +107,47 @@ func (f *Float32) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (f *Float32) Set(val interface{}) (status string) {
+func (f *Float32) Set(val interface{}) (err error) {
 	fval, ok := val.(float64)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a float value")
 	}
 
 	f.value = float32(fval)
 
-	return StatusOK
+	return nil
 }
 
 // Compare compares two items
-func (f *Float32) Compare(kind Comparison, other Item) (result bool, status string) {
+func (f *Float32) Compare(kind Comparison, other Item) (result bool, err error) {
 	oval, ok := castNumeric(other)
 	if !ok {
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "can only compare floats with numeric types (ints, floats, uints, ...)")
 	}
 
 	sval, _ := castNumeric(f)
 
 	switch kind {
 	case Equal:
-		return sval == oval, StatusOK
+		return sval == oval, nil
 
 	case NotEqual:
-		return sval != oval, StatusOK
+		return sval != oval, nil
 
 	case Less:
-		return sval < oval, StatusOK
+		return sval < oval, nil
 
 	case More:
-		return sval > oval, StatusOK
+		return sval > oval, nil
 
 	case LessOrEqual:
-		return sval <= oval, StatusOK
+		return sval <= oval, nil
 
 	case MoreOrEqual:
-		return sval >= oval, StatusOK
+		return sval >= oval, nil
 
 	default:
-		return false, StatusNOOP
+		return false, newError(ErrNOOP, "only =, !=, <, >, <=, >= comparisons are supported on floats")
 	}
 }
 

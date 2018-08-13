@@ -61,9 +61,9 @@ func (s *Server) handleJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, status := s.Database.QueryString(r.Form["selector"][0])
-	if status != db.StatusOK {
-		errorMessage(w, status)
+	res, err := s.Database.QueryString(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, err.Error())
 		return
 	}
 
@@ -99,9 +99,9 @@ func (s *Server) handleSet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	item, status := s.Database.QueryString(r.Form["selector"][0])
-	if status != db.StatusOK {
-		errorMessage(w, status)
+	item, err := s.Database.QueryString(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, err.Error())
 		return
 	}
 
@@ -111,30 +111,15 @@ func (s *Server) handleSet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if status = item.Set(val); status != db.StatusOK {
-		errorMessage(w, status)
+	if err = item.Set(val); err != nil {
+		errorMessage(w, err.Error())
 		return
 	}
 
 	fmt.Fprint(w, item.JSON())
 }
 
-func errorMessage(w http.ResponseWriter, status string) {
-	var msg string
-	switch status {
-	case db.StatusError:
-		msg = "unknown error"
-	case db.StatusIndex:
-		msg = "invalid index or key"
-	case db.StatusNOOP:
-		msg = "invalid operation"
-	case db.StatusNoType:
-		msg = "unknown type"
-	case db.StatusType:
-		msg = "invalid type"
-	default:
-		msg = status
-	}
+func errorMessage(w http.ResponseWriter, msg string) {
 	w.WriteHeader(http.StatusInternalServerError)
 
 	bytes, err := json.Marshal(map[string]string{

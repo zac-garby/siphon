@@ -99,15 +99,14 @@ func (h *Hashmap) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (h *Hashmap) Set(val interface{}) (status string) {
+func (h *Hashmap) Set(val interface{}) (err error) {
 	if !h.keyType.Equals(&StringType{}) {
-		// Set can only be used on string:any hashmaps, due to the syntax of JSON
-		return StatusNOOP
+		return newError(ErrNOOP, "set can only be used on <string:any> hashmaps, due to JSON syntax")
 	}
 
 	hval, ok := val.(map[string]interface{})
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a hashmap value")
 	}
 
 	h.data = make(map[string]Item, len(hval))
@@ -115,71 +114,83 @@ func (h *Hashmap) Set(val interface{}) (status string) {
 
 	for k, v := range hval {
 		newVal := MakeZeroValue(h.valType)
-		if status := newVal.Set(v); status != StatusOK {
-			return status
+		if err := newVal.Set(v); err != nil {
+			return err
 		}
 
-		if status := h.SetKey(&String{value: k}, newVal); status != StatusOK {
-			return status
+		if err := h.SetKey(&String{value: k}, newVal); err != nil {
+			return err
 		}
 	}
 
-	return StatusOK
+	return nil
 }
 
 // GetKey gets the given key from the hashmap
-func (h *Hashmap) GetKey(key Item) (result Item, status string) {
+func (h *Hashmap) GetKey(key Item) (result Item, err error) {
 	if !key.Type().Equals(h.keyType) {
-		return nil, StatusType
+		return nil, newError(
+			ErrType, "hashmap key type is %s, but a key of type %s was requested",
+			h.keyType,
+			key.Type(),
+		)
 	}
 
 	hash, err := structhash.Hash(key, 1)
 	if err != nil {
-		return nil, StatusError
+		return nil, newError(ErrUnknown, "could not hash a value for some reason")
 	}
 
 	val, ok := h.data[hash]
 	if !ok {
-		return nil, StatusIndex
+		return nil, newError(ErrIndex, "key %s does not exist", key)
 	}
 
-	return val, StatusOK
+	return val, nil
 }
 
 // SetKey sets the given key in the hashmap to a value
-func (h *Hashmap) SetKey(key Item, to Item) (status string) {
+func (h *Hashmap) SetKey(key Item, to Item) (err error) {
 	if !key.Type().Equals(h.keyType) {
-		return StatusType
+		return newError(
+			ErrType, "hashmap key type is %s, so a key of type %s cannot be assigned",
+			h.keyType,
+			key.Type(),
+		)
 	}
 
 	if !to.Type().Equals(h.valType) {
-		return StatusType
+		return newError(
+			ErrType, "hashmap value type is %s, so a value of type %s cannot be assigned",
+			h.valType,
+			to.Type(),
+		)
 	}
 
 	hash, err := structhash.Hash(key, 1)
 	if err != nil {
-		return StatusError
+		return newError(ErrIndex, "key %s does not exist", key)
 	}
 
 	h.data[hash] = to
 	h.keys[hash] = key
 
-	return StatusOK
+	return nil
 }
 
 // GetField gets the given field from the hashmap
-func (h *Hashmap) GetField(key string) (result Item, status string) {
+func (h *Hashmap) GetField(key string) (result Item, err error) {
 	return h.GetKey(NewString(key))
 }
 
 // SetField sets the given field in the hashmap to a value
-func (h *Hashmap) SetField(key string, to Item) (status string) {
+func (h *Hashmap) SetField(key string, to Item) (err error) {
 	return h.SetKey(NewString(key), to)
 }
 
 // Filter filters the hashmap, returning a new hashmap where only the
 // filtered key:val pairs are present.
-func (h *Hashmap) Filter(field string, kind Comparison, other Item) (result Item, status string) {
+func (h *Hashmap) Filter(field string, kind Comparison, other Item) (result Item, err error) {
 	result = &Hashmap{
 		keyType: h.keyType,
 		valType: h.valType,
@@ -194,21 +205,21 @@ func (h *Hashmap) Filter(field string, kind Comparison, other Item) (result Item
 		)
 
 		if field == "" {
-			pred, status := val.Compare(kind, other)
-			if status != StatusOK {
-				return nil, status
+			pred, err := val.Compare(kind, other)
+			if err != nil {
+				return nil, err
 			}
 
 			predicate = pred
 		} else {
-			fval, status := val.GetField(field)
-			if status != StatusOK {
-				return nil, status
+			fval, err := val.GetField(field)
+			if err != nil {
+				return nil, err
 			}
 
-			pred, status := fval.Compare(kind, other)
-			if status != StatusOK {
-				return nil, status
+			pred, err := fval.Compare(kind, other)
+			if err != nil {
+				return nil, err
 			}
 
 			predicate = pred
@@ -219,5 +230,5 @@ func (h *Hashmap) Filter(field string, kind Comparison, other Item) (result Item
 		}
 	}
 
-	return result, StatusOK
+	return result, nil
 }

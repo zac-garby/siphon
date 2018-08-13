@@ -29,13 +29,13 @@ func (r *Regexp) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (r *Regexp) Set(val interface{}) (status string) {
+func (r *Regexp) Set(val interface{}) (err error) {
 	sval, ok := val.(string)
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a string value")
 	}
 
 	r.value = sval
 
-	return StatusOK
+	return nil
 }

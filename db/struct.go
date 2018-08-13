@@ -71,14 +71,14 @@ func (s *Struct) JSON() string {
 }
 
 // Set sets the value of the item to the given value
-func (s *Struct) Set(val interface{}) (status string) {
+func (s *Struct) Set(val interface{}) (err error) {
 	hval, ok := val.(map[string]interface{})
 	if !ok {
-		return StatusType
+		return newError(ErrType, "expected a hashmap value whose keys are strings")
 	}
 
 	if len(hval) != len(s.value) {
-		return StatusType
+		return newError(ErrType, "all fields must be present to set a struct's value")
 	}
 
 	newMap := make(map[string]Item, len(hval))
@@ -87,11 +87,11 @@ func (s *Struct) Set(val interface{}) (status string) {
 		newVal := MakeZeroValue(ty)
 		newInterVal, ok := hval[k]
 		if !ok {
-			return StatusType
+			return newError(ErrType, "all fields must be present to set a struct's value")
 		}
 
-		if status := newVal.Set(newInterVal); status != StatusOK {
-			return status
+		if err := newVal.Set(newInterVal); err != nil {
+			return err
 		}
 
 		newMap[k] = newVal
@@ -99,30 +99,36 @@ func (s *Struct) Set(val interface{}) (status string) {
 
 	s.value = newMap
 
-	return StatusOK
+	return nil
 }
 
 // GetField returns the field named 'key' in the struct.
-func (s *Struct) GetField(key string) (result Item, status string) {
+func (s *Struct) GetField(key string) (result Item, err error) {
 	val, ok := s.value[key]
 	if !ok {
-		return nil, StatusIndex
+		return nil, newError(ErrIndex, "cannot retrieve undefined field %s", key)
 	}
 
-	return val, StatusOK
+	return val, nil
 }
 
 // SetField sets the field named 'key' to the given value.
-func (s *Struct) SetField(key string, to Item) (status string) {
+func (s *Struct) SetField(key string, to Item) (err error) {
 	reqType, ok := s.ty.Fields[key]
 	if !ok {
-		return StatusIndex
+		return newError(ErrIndex, "cannot retrieve undefined field %s")
 	}
 	if !to.Type().Equals(reqType) {
-		return StatusType
+		return newError(
+			ErrType,
+			"field %s of type %s cannot be assigned to a %s",
+			key,
+			reqType,
+			to.Type(),
+		)
 	}
 
 	s.value[key] = to
 
-	return StatusOK
+	return nil
 }
