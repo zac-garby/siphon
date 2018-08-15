@@ -74,7 +74,9 @@ type Item interface {
 	Compare(kind Comparison, other Item) (result bool, err error)
 	Filter(field string, kind Comparison, other Item) (result Item, err error)
 	Append(items ...Item) (err error)
+	AppendJSON(json interface{}) (err error)
 	Prepend(items ...Item) (err error)
+	PrependJSON(json interface{}) (err error)
 }
 
 type itemDefaults struct{}
@@ -111,6 +113,14 @@ func (i *itemDefaults) Append(items ...Item) (err error) {
 	return newError(ErrNOOP, "append not supported")
 }
 
+func (i *itemDefaults) AppendJSON(json interface{}) (err error) {
+	return newError(ErrNOOP, "append json not supported")
+}
+
 func (i *itemDefaults) Prepend(items ...Item) (err error) {
 	return newError(ErrNOOP, "prepend not supported")
+}
+
+func (i *itemDefaults) PrependJSON(json interface{}) (err error) {
+	return newError(ErrNOOP, "prepend json not supported")
 }

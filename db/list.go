@@ -178,3 +178,25 @@ func (l *List) Prepend(items ...Item) (err error) {
 	l.value = append(items, l.value...)
 	return nil
 }
+
+// AppendJSON appends an item encoded as JSON to the list.
+func (l *List) AppendJSON(json interface{}) (err error) {
+	item := MakeZeroValue(l.valType)
+
+	if err := item.Set(json); err != nil {
+		return err
+	}
+
+	return l.Append(item)
+}
+
+// PrependJSON prepends an item encoded as JSON to the list.
+func (l *List) PrependJSON(json interface{}) (err error) {
+	item := MakeZeroValue(l.valType)
+
+	if err := item.Set(json); err != nil {
+		return err
+	}
+
+	return l.Prepend(item)
+}

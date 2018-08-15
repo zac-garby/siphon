@@ -39,6 +39,8 @@ func (s *Server) Listen() error {
 	r := mux.NewRouter()
 	r.HandleFunc("/json", s.handleJSON)
 	r.HandleFunc("/set", s.handleSet)
+	r.HandleFunc("/append", s.handleAppend)
+	r.HandleFunc("/prepend", s.handlePrepend)
 
 	return http.ListenAndServe(s.Addr, r)
 }
@@ -112,6 +114,104 @@ func (s *Server) handleSet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = item.Set(val); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	fmt.Fprint(w, item.JSON())
+}
+
+func (s *Server) handleAppend(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/json")
+
+	if r.Method != "POST" {
+		errorMessage(w, "only POST is supported for /append")
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if len(r.Form["selector"]) != 1 {
+		errorMessage(w, "only one form value expected for the selector")
+		return
+	}
+
+	if r.Body == nil {
+		errorMessage(w, "expected a request body")
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		errorMessage(w, "could not read request body")
+		return
+	}
+
+	item, err := s.Database.QueryString(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	var val interface{}
+	if err := json.Unmarshal(body, &val); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if err = item.AppendJSON(val); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	fmt.Fprint(w, item.JSON())
+}
+
+func (s *Server) handlePrepend(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/json")
+
+	if r.Method != "POST" {
+		errorMessage(w, "only POST is supported for /prepend")
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if len(r.Form["selector"]) != 1 {
+		errorMessage(w, "only one form value expected for the selector")
+		return
+	}
+
+	if r.Body == nil {
+		errorMessage(w, "expected a request body")
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		errorMessage(w, "could not read request body")
+		return
+	}
+
+	item, err := s.Database.QueryString(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	var val interface{}
+	if err := json.Unmarshal(body, &val); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if err = item.PrependJSON(val); err != nil {
 		errorMessage(w, err.Error())
 		return
 	}
