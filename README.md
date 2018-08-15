@@ -85,3 +85,4 @@ Route        | Description
 `/prepend`   | Prepends `data` to the current value
 `/key`       | Sets key `data.key` to `data.value` (also works for struct fields)
 `/delete`    | Deletes key/index `data`
+`/empty`     | Empties a list or hashmap
