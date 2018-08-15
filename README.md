@@ -22,6 +22,7 @@ Data can be modified in a similar way.
  - Define database structure with a schema
  - Responses available as JSON
  - Persistant storage on disk
+ - Support for graphQL queries
 
 ## Schema
 
