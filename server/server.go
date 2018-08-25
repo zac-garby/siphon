@@ -41,6 +41,7 @@ func (s *Server) Listen() error {
 	r.HandleFunc("/set", s.handleSet)
 	r.HandleFunc("/append", s.handleAppend)
 	r.HandleFunc("/prepend", s.handlePrepend)
+	r.HandleFunc("/key", s.handleKey)
 
 	return http.ListenAndServe(s.Addr, r)
 }
@@ -217,6 +218,57 @@ func (s *Server) handlePrepend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprint(w, item.JSON())
+}
+
+func (s *Server) handleKey(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/json")
+
+	if r.Method != "POST" {
+		errorMessage(w, "only POST is supported for /key")
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if len(r.Form["selector"]) != 1 {
+		errorMessage(w, "only one form value expected for the selector")
+		return
+	}
+
+	if r.Body == nil {
+		errorMessage(w, "expected a request body")
+		return
+	}
+
+	item, err := s.Database.QueryString(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		errorMessage(w, "could not read request body")
+		return
+	}
+
+	data := struct {
+		Key   interface{} `json:"key"`
+		Value interface{} `json:"value"`
+	}{}
+
+	if err := json.Unmarshal(body, &data); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if err := item.SetKeyJSON(data.Key, data.Value); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
 }
 
 func errorMessage(w http.ResponseWriter, msg string) {

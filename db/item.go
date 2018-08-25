@@ -70,6 +70,7 @@ type Item interface {
 	GetKey(key Item) (result Item, err error)
 	GetField(key string) (result Item, err error)
 	SetKey(key Item, to Item) (err error)
+	SetKeyJSON(key interface{}, to interface{}) (err error)
 	SetField(key string, to Item) (err error)
 	Compare(kind Comparison, other Item) (result bool, err error)
 	Filter(field string, kind Comparison, other Item) (result Item, err error)
@@ -95,6 +96,10 @@ func (i *itemDefaults) GetField(key string) (result Item, err error) {
 
 func (i *itemDefaults) SetKey(key Item, to Item) (err error) {
 	return newError(ErrNOOP, "setkey not supported")
+}
+
+func (i *itemDefaults) SetKeyJSON(key interface{}, to interface{}) (err error) {
+	return newError(ErrNOOP, "setkey json not supported")
 }
 
 func (i *itemDefaults) SetField(key string, to Item) (err error) {

@@ -178,6 +178,25 @@ func (h *Hashmap) SetKey(key Item, to Item) (err error) {
 	return nil
 }
 
+// SetKeyJSON sets the given key in the hashmap to a value, where the key and value
+// are encoded in JSON
+func (h *Hashmap) SetKeyJSON(keyJSON interface{}, toJSON interface{}) (err error) {
+	var (
+		key = MakeZeroValue(h.keyType)
+		val = MakeZeroValue(h.valType)
+	)
+
+	if err := key.Set(keyJSON); err != nil {
+		return err
+	}
+
+	if err := val.Set(toJSON); err != nil {
+		return err
+	}
+
+	return h.SetKey(key, val)
+}
+
 // GetField gets the given field from the hashmap
 func (h *Hashmap) GetField(key string) (result Item, err error) {
 	return h.GetKey(NewString(key))
