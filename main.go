@@ -10,6 +10,7 @@ import (
 func main() {
 	s, err := server.NewServer(":7913", `
 	me: user
+	map: <string:string>
 	
 	struct user {
 		name: string
