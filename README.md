@@ -24,6 +24,14 @@ Data can be modified in a similar way.
  - Persistant storage on disk
  - Support for graphQL queries
 
+## TODO
+
+ - Improve selector syntax
+    - Allow every kind of literal in comparisons
+    - Add boolean operators, e.g. `users[name="foo" | (age>10 & age<20)]`
+    - Add full expression support, e.g. `num_pairs[a + b > 5]`
+    - Add global variables, e.g. `sessions[expires >= $TIMESTAMP]`
+
 ## Schema
 
 A schema defines the structure and types of the database. It might look something like this:
