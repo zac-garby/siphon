@@ -93,5 +93,5 @@ Route        | Description
 `/append`    | Appends `data` to the current value
 `/prepend`   | Prepends `data` to the current value
 `/key`       | Sets key `data.key` to `data.value` (also works for struct fields and list indices)
-`/delete`    | Deletes key/index `data`
+`/delete`    | Deletes the selected keys/indexes
 `/empty`     | Empties a list or hashmap
