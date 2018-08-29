@@ -1,0 +1,5 @@
+github.com/alecthomas/participle v0.0.0-20180801095730-433a43f4119e/go.mod h1:UkaznBMzS/FVetZ0dhhxVOiSBDgfLmIYp249zU1w/Z0=
+github.com/cnf/structhash v0.0.0-20180104161610-62a607eb0224/go.mod h1:pCxVEbcm3AMg7ejXyorUXi6HQCzOIBf7zEDVPtw0/U4=
+github.com/gorilla/context v1.1.1/go.mod h1:kBGZzfjB9CEq2AlWe17Uuf7NDRt0dE0s8S51q0aT7Yg=
+github.com/gorilla/mux v1.6.2/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
+golang.org/x/exp v0.0.0-20180710024300-14dda7b62fcd/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
