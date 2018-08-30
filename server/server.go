@@ -269,6 +269,8 @@ func (s *Server) handleKey(w http.ResponseWriter, r *http.Request) {
 		errorMessage(w, err.Error())
 		return
 	}
+
+	fmt.Fprint(w, item.JSON())
 }
 
 func errorMessage(w http.ResponseWriter, msg string) {
