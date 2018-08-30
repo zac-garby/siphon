@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 
 	"github.com/Zac-Garby/db/db"
 	"github.com/gorilla/mux"
@@ -64,7 +65,13 @@ func (s *Server) handleJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.Database.QueryString(r.Form["selector"][0])
+	selector, err := url.QueryUnescape(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, "could not unescape selector: "+r.Form["selector"][0])
+		return
+	}
+
+	res, err := s.Database.QueryString(selector)
 	if err != nil {
 		errorMessage(w, err.Error())
 		return
@@ -91,6 +98,12 @@ func (s *Server) handleSet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	selector, err := url.QueryUnescape(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, "could not unescape selector: "+r.Form["selector"][0])
+		return
+	}
+
 	if r.Body == nil {
 		errorMessage(w, "expected a request body")
 		return
@@ -102,7 +115,7 @@ func (s *Server) handleSet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	item, err := s.Database.QueryString(r.Form["selector"][0])
+	item, err := s.Database.QueryString(selector)
 	if err != nil {
 		errorMessage(w, err.Error())
 		return
@@ -118,8 +131,6 @@ func (s *Server) handleSet(w http.ResponseWriter, r *http.Request) {
 		errorMessage(w, err.Error())
 		return
 	}
-
-	fmt.Fprint(w, item.JSON())
 }
 
 func (s *Server) handleAppend(w http.ResponseWriter, r *http.Request) {
@@ -140,6 +151,12 @@ func (s *Server) handleAppend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	selector, err := url.QueryUnescape(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, "could not unescape selector: "+r.Form["selector"][0])
+		return
+	}
+
 	if r.Body == nil {
 		errorMessage(w, "expected a request body")
 		return
@@ -151,7 +168,7 @@ func (s *Server) handleAppend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	item, err := s.Database.QueryString(r.Form["selector"][0])
+	item, err := s.Database.QueryString(selector)
 	if err != nil {
 		errorMessage(w, err.Error())
 		return
@@ -167,8 +184,6 @@ func (s *Server) handleAppend(w http.ResponseWriter, r *http.Request) {
 		errorMessage(w, err.Error())
 		return
 	}
-
-	fmt.Fprint(w, item.JSON())
 }
 
 func (s *Server) handlePrepend(w http.ResponseWriter, r *http.Request) {
@@ -189,6 +204,12 @@ func (s *Server) handlePrepend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	selector, err := url.QueryUnescape(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, "could not unescape selector: "+r.Form["selector"][0])
+		return
+	}
+
 	if r.Body == nil {
 		errorMessage(w, "expected a request body")
 		return
@@ -200,7 +221,7 @@ func (s *Server) handlePrepend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	item, err := s.Database.QueryString(r.Form["selector"][0])
+	item, err := s.Database.QueryString(selector)
 	if err != nil {
 		errorMessage(w, err.Error())
 		return
@@ -216,8 +237,6 @@ func (s *Server) handlePrepend(w http.ResponseWriter, r *http.Request) {
 		errorMessage(w, err.Error())
 		return
 	}
-
-	fmt.Fprint(w, item.JSON())
 }
 
 func (s *Server) handleKey(w http.ResponseWriter, r *http.Request) {
@@ -238,12 +257,18 @@ func (s *Server) handleKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	selector, err := url.QueryUnescape(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, "could not unescape selector: "+r.Form["selector"][0])
+		return
+	}
+
 	if r.Body == nil {
 		errorMessage(w, "expected a request body")
 		return
 	}
 
-	item, err := s.Database.QueryString(r.Form["selector"][0])
+	item, err := s.Database.QueryString(selector)
 	if err != nil {
 		errorMessage(w, err.Error())
 		return
@@ -269,8 +294,6 @@ func (s *Server) handleKey(w http.ResponseWriter, r *http.Request) {
 		errorMessage(w, err.Error())
 		return
 	}
-
-	fmt.Fprint(w, item.JSON())
 }
 
 func errorMessage(w http.ResponseWriter, msg string) {
