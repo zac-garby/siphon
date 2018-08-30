@@ -106,17 +106,21 @@ func request(addr, action, selector, data string) error {
 		return fmt.Errorf("http err: %s", resp.Status)
 	}
 
-	var response interface{}
-	if err := json.Unmarshal(body, &response); err != nil {
-		return fmt.Errorf("json decode: %s\n%s", err.Error(), string(body))
+	if len(body) > 0 {
+		var response interface{}
+		if err := json.Unmarshal(body, &response); err != nil {
+			return fmt.Errorf("json decode: %s\n%s", err.Error(), string(body))
+		}
+
+		out, err := json.MarshalIndent(response, "", "  ")
+		if err != nil {
+			return fmt.Errorf("json marshal: %s", err.Error())
+		}
+
+		fmt.Println(string(out))
 	}
 
-	out, err := json.MarshalIndent(response, "", "  ")
-	if err != nil {
-		return fmt.Errorf("json marshal: %s", err.Error())
-	}
-
-	fmt.Println(string(out))
+	fmt.Println(http.StatusText(resp.StatusCode))
 
 	return nil
 }
