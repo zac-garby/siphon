@@ -1,0 +1,9 @@
+me: user
+map: <string:string>
+
+struct user {
+    name: string
+    email: string
+    age: uint8
+    friends: [user]
+}

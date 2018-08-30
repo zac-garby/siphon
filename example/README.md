@@ -14,6 +14,8 @@ struct user {
 }
 ```
 
+To run it, `$ cd` to the directory and run `$ db`.
+
 ## Stuff to try
 
 ### Set some data
