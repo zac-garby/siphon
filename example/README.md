@@ -5,6 +5,7 @@ This is a simple example of usage of `db`. The schema is as follows:
 ```
 me: user
 map: <string:string>
+nums: [float]
 
 struct user {
     name: string
