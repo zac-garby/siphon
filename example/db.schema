@@ -1,5 +1,6 @@
 me: user
 map: <string:string>
+nums: [float]
 
 struct user {
     name: string
