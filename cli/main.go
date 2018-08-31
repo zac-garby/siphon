@@ -34,8 +34,12 @@ func repl(in io.Reader, addr string) {
 		line = strings.TrimSpace(line)
 		parts := strings.SplitN(line, " ", 2)
 
+		if len(parts) == 1 {
+			parts = append([]string{"json"}, parts[0])
+		}
+
 		if len(parts) != 2 {
-			fmt.Println("input should be in the format '<action> <selector>'")
+			fmt.Println("input should be in the format '<action> <selector>' or just '<selector>'")
 			continue
 		}
 
