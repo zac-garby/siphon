@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/Zac-Garby/db/server"
+	"github.com/Zac-Garby/siphon/server"
 )
 
-var schemaFile = flag.String("schema", "db.schema", "the location of the file containing the database schema")
+var schemaFile = flag.String("schema", "schema.sip", "the location of the file containing the database schema")
 var port = flag.Int("port", 7913, "the port on which to listen")
 
 func main() {

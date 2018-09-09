@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/Zac-Garby/db/db"
+	"github.com/Zac-Garby/siphon/db"
 	"github.com/gorilla/mux"
 )
 

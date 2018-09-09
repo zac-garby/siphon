@@ -1,6 +1,6 @@
-# db
+# Siphon DB
 
-db is a NoSQL database with a straightforward and powerful query syntax. Querying is done using _selectors_ - here are a few:
+Siphon is a NoSQL database with a straightforward and powerful query syntax. Querying is done using _selectors_ - here are a few:
 
 ```ruby
 # Get a list of the friends of user no. 5
