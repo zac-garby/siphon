@@ -50,7 +50,6 @@ func repl(in io.Reader, addr string) {
 		)
 
 		if action == "set" || action == "append" || action == "prepend" || action == "key" {
-			fmt.Println("enter some JSON data:")
 			for {
 				fmt.Print("| ")
 				line, err := r.ReadString('\n')
