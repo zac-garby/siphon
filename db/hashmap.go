@@ -197,6 +197,34 @@ func (h *Hashmap) SetKeyJSON(keyJSON interface{}, toJSON interface{}) (err error
 	return h.SetKey(key, val)
 }
 
+// UnsetKey removes the given key.
+func (h *Hashmap) UnsetKey(key Item) (err error) {
+	hash, err := structhash.Hash(key, 1)
+	if err != nil {
+		return newError(ErrIndex, "key %s cannot be hashed", key)
+	}
+
+	if _, ok := h.keys[hash]; !ok {
+		return newError(ErrIndex, "key %s does not exist", key)
+	}
+
+	delete(h.keys, hash)
+	delete(h.data, hash)
+
+	return nil
+}
+
+// UnsetKeyJSON removes the given key, where the key is encoded in JSON.
+func (h *Hashmap) UnsetKeyJSON(keyJSON interface{}) (err error) {
+	key := MakeZeroValue(h.keyType)
+
+	if err := key.Set(keyJSON); err != nil {
+		return err
+	}
+
+	return h.UnsetKey(key)
+}
+
 // GetField gets the given field from the hashmap
 func (h *Hashmap) GetField(key string) (result Item, err error) {
 	return h.GetKey(NewString(key))

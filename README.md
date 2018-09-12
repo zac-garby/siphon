@@ -90,8 +90,8 @@ A number of routes are supported for modifying data. Here's a full list: (`data`
 Route        | Description
 -------------|---------------------------------------------
 `/set`       | Sets the value to `data`
+`/unset`     | Deletes the selected keys/indexes
 `/append`    | Appends `data` to the current value
 `/prepend`   | Prepends `data` to the current value
 `/key`       | Sets key `data.key` to `data.value` (also works for struct fields and list indices)
-`/delete`    | Deletes the selected keys/indexes
 `/empty`     | Empties a list or hashmap

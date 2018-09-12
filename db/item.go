@@ -71,6 +71,8 @@ type Item interface {
 	GetField(key string) (result Item, err error)
 	SetKey(key Item, to Item) (err error)
 	SetKeyJSON(key interface{}, to interface{}) (err error)
+	UnsetKey(key Item) (err error)
+	UnsetKeyJSON(key interface{}) (err error)
 	SetField(key string, to Item) (err error)
 	Compare(kind Comparison, other Item) (result bool, err error)
 	Filter(field string, kind Comparison, other Item) (result Item, err error)
@@ -128,4 +130,12 @@ func (i *itemDefaults) Prepend(items ...Item) (err error) {
 
 func (i *itemDefaults) PrependJSON(json interface{}) (err error) {
 	return newError(ErrNOOP, "prepend json not supported")
+}
+
+func (i *itemDefaults) UnsetKey(key Item) (err error) {
+	return newError(ErrNOOP, "unsetkey not supported")
+}
+
+func (i *itemDefaults) UnsetKeyJSON(key interface{}) (err error) {
+	return newError(ErrNOOP, "unsetkey json not supported")
 }

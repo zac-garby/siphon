@@ -200,3 +200,32 @@ func (l *List) PrependJSON(json interface{}) (err error) {
 
 	return l.Prepend(item)
 }
+
+// UnsetKey removes the element at the given index.
+func (l *List) UnsetKey(key Item) (err error) {
+	val, ok := castNumeric(key)
+	if !ok {
+		return newError(ErrType, "can only index a list with a numeric type")
+	}
+
+	index := int(val)
+
+	if index < 0 || index >= len(l.value) {
+		return newError(ErrIndex, "index out of bounds")
+	}
+
+	l.value = append(l.value[:index], l.value[index+1:]...)
+
+	return nil
+}
+
+// UnsetKeyJSON removes the element at the given index, encoded in JSON.
+func (l *List) UnsetKeyJSON(json interface{}) (err error) {
+	key := MakeZeroValue(l.valType)
+
+	if err := key.Set(json); err != nil {
+		return err
+	}
+
+	return l.UnsetKey(key)
+}

@@ -49,7 +49,7 @@ func repl(in io.Reader, addr string) {
 			data     string
 		)
 
-		if action == "set" || action == "append" || action == "prepend" || action == "key" {
+		if action == "set" || action == "unset" || action == "append" || action == "prepend" || action == "key" {
 			for {
 				fmt.Print("| ")
 				line, err := r.ReadString('\n')
@@ -73,7 +73,7 @@ func repl(in io.Reader, addr string) {
 }
 
 func request(addr, action, selector, data string) error {
-	if !(action == "json" || action == "set" || action == "append" || action == "prepend" || action == "key" || action == "delete" || action == "empty") {
+	if !(action == "json" || action == "set" || action == "append" || action == "prepend" || action == "key" || action == "unset" || action == "empty") {
 		return fmt.Errorf("invalid request action: %s", action)
 	}
 
@@ -123,7 +123,11 @@ func request(addr, action, selector, data string) error {
 		fmt.Println(string(out))
 	}
 
-	fmt.Println(http.StatusText(resp.StatusCode))
+	if resp.StatusCode == http.StatusInternalServerError {
+		fmt.Println("ERR")
+	} else {
+		fmt.Println(http.StatusText(resp.StatusCode))
+	}
 
 	return nil
 }
