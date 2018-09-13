@@ -279,3 +279,11 @@ func (h *Hashmap) Filter(field string, kind Comparison, other Item) (result Item
 
 	return result, nil
 }
+
+// Empty clears the data of the hashmap.
+func (h *Hashmap) Empty() (err error) {
+	h.data = make(map[string]Item)
+	h.keys = make(map[string]Item)
+
+	return nil
+}

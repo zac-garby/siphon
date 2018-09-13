@@ -44,6 +44,7 @@ func (s *Server) Listen() error {
 	r.HandleFunc("/append", s.handleAppend)
 	r.HandleFunc("/prepend", s.handlePrepend)
 	r.HandleFunc("/key", s.handleKey)
+	r.HandleFunc("/empty", s.handleEmpty)
 
 	return http.ListenAndServe(s.Addr, r)
 }
@@ -345,6 +346,42 @@ func (s *Server) handleUnset(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = item.UnsetKeyJSON(val); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+}
+
+func (s *Server) handleEmpty(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/json")
+
+	if r.Method != "POST" {
+		errorMessage(w, "only POST is supported for /empty")
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if len(r.Form["selector"]) != 1 {
+		errorMessage(w, "only one form value expected for the selector")
+		return
+	}
+
+	selector, err := url.QueryUnescape(r.Form["selector"][0])
+	if err != nil {
+		errorMessage(w, "could not unescape selector: "+r.Form["selector"][0])
+		return
+	}
+
+	res, err := s.Database.QueryString(selector)
+	if err != nil {
+		errorMessage(w, err.Error())
+		return
+	}
+
+	if err = res.Empty(); err != nil {
 		errorMessage(w, err.Error())
 		return
 	}

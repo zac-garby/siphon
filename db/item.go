@@ -80,6 +80,7 @@ type Item interface {
 	AppendJSON(json interface{}) (err error)
 	Prepend(items ...Item) (err error)
 	PrependJSON(json interface{}) (err error)
+	Empty() (err error)
 }
 
 type itemDefaults struct{}
@@ -138,4 +139,8 @@ func (i *itemDefaults) UnsetKey(key Item) (err error) {
 
 func (i *itemDefaults) UnsetKeyJSON(key interface{}) (err error) {
 	return newError(ErrNOOP, "unsetkey json not supported")
+}
+
+func (i *itemDefaults) Empty() (err error) {
+	return newError(ErrNOOP, "empty not supported")
 }

@@ -229,3 +229,9 @@ func (l *List) UnsetKeyJSON(json interface{}) (err error) {
 
 	return l.UnsetKey(key)
 }
+
+// Empty removes all elements from the list.
+func (l *List) Empty() (err error) {
+	l.value = make([]Item, 0)
+	return nil
+}
