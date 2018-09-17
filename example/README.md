@@ -15,36 +15,34 @@ struct user {
 }
 ```
 
-To run it, `$ cd` to the directory and run `$ db`.
+To run it, `$ cd` to the directory and run `$ siphon`.
 
 ## Stuff to try
 
-### Set some data
+Once the server is running (see above,) you can open a CLI session with it using `$ siphon-cli http://localhost:7913`:
 
-Set the field `me` to contain some actual data. Send a `POST` request to `localhost:7913/set?selector=me` with a post body looking something like this:
-
-```json
-{
-    "name": "your name",
-    "email": "your email",
-    "age": 16,
-    "friends": [
-        {
-            "name": "something",
-            "email": "some@thi.ng",
-            "age": 17,
-            "friends": []
-        },
-        {
-            "name": "foo",
-            "email": "bar",
-            "age": 16,
-            "friends": []
-        }
-    ]
-}
 ```
+? set nums
+| [1, 2, 3, 4, 5]
+OK
 
-### Query the database
+? nums
+[
+    1,
+    2,
+    3,
+    4,
+    5
+]
 
-Make a `GET` request to `localhost:7913/json?selector=me` to retrieve the data you just stored. You can also do something a bit more complicated, for example instead of using the selector `me`, you could use `me.friends[age=16].name`, which will return the names all friends who are 16 years old.
+? set me
+| {
+    "name": "foo",
+    "email": "foo@example.com",
+    "age": 100,
+    "friends": []
+}
+
+? append nums
+| 5
+```
