@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Siphon DB</title>
+
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <h1>Siphon DB</h1>
+
+            <p>Siphon is a minimalistic NoSQL database accessed via HTTP.</p>
+
+            <p>It consists of two languages - one for designing schemas and one for querying your data - and a HTTP server for creating and using a database.</p>
+
+            <p>The data is organised into a key-value store, which makes it easy to create the database and query it.</p>
+
+            <p>Here's an example of a schema, a query, and a response:</p>
+
+            <div class="snippets">
+                <div>
+                    <h5>Schema</h5>
+                    <pre><code>users<span class="punctuation">:</span> <span class="punctuation">[</span><span class="type-name">user</span><span class="punctuation">]</span>
+posts<span class="punctuation">:</span> &lt;<span class="type-name">int</span><span class="punctuation">:</span><span class="type-name">post</span>&gt;
+
+<span class="keyword">struct</span> <span class="type-name">user</span> <span class="punctuation">{</span>
+    id<span class="punctuation">:</span> <span class="type-name">int</span>
+    name<span class="punctuation">:</span> <span class="type-name">string</span>
+    pass<span class="punctuation">:</span> <span class="type-name">string</span>
+    post_ids<span class="punctuation">:</span> <span class="punctuation">[</span><span class="type-name">int</span><span class="punctuation">]</span>
+}
+
+<span class="keyword">struct</span> <span class="type-name">post</span> <span class="punctuation">{</span>
+    id<span class="punctuation">:</span> <span class="type-name">int</span>
+    title<span class="punctuation">:</span> <span class="type-name">string</span>
+    content<span class="punctuation">:</span> <span class="type-name">string</span>
+    likes<span class="punctuation">:</span> <span class="type-name">uint</span>
+<span class="punctuation">}</span>
+                    </code></pre>
+                </div>
+
+                <div class="right">
+                    <div>
+                        <h5>Query</h5>
+                        <pre><code>users<span class="punctuation">[</span><span class="type-name">5</span><span class="punctuation">]</span>.friends<span class="punctuation">[</span>name<span class="punctuation">~</span><span class="type-name">/^foo/</span><span class="punctuation">]</span></code></pre>
+                    </div>
+                    <div>
+                        <h5>Result</h5>
+                        <pre><code><span class="punctuation">{</span>
+    "<span class="type-name">id</span>"<span class="punctuation">:</span> 5<span class="punctuation">,</span>
+    "<span class="type-name">name</span>"<span class="punctuation">:</span> "foobar"<span class="punctuation">,</span>
+    "<span class="type-name">pass</span>"<span class="punctuation">:</span> "..."<span class="punctuation">,</span>
+    "<span class="type-name">post_ids</span>"<span class="punctuation">:</span> <span class="punctuation">[</span>
+        1,
+        5,
+        10,
+        21
+    <span class="punctuation">]</span>
+<span class="punctuation">}</span></code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Supported data-types</h2>
+            <ul>
+                <li>Boolean: <code>bool</code></li>
+                <li>Floating point: <code>float</code>, <code>float32</code></li>
+                <li>Integer: <code>int</code>, <code>int32</code>, <code>int16</code>, <code>int8</code></li>
+                <li>Unsigned integer: <code>uint</code>, <code>uint32</code>, <code>uint16</code>, <code>uint8</code></li>
+                <li>Regexp: <code>regexp</code></li>
+                <li>Hashmap: <code>&lt;key:val&gt;</code></li>
+                <li>List: <code>[type]</code></li>
+                <li>Struct</li>
+            </ul>
+        </div>
+    </body>
+</html>
