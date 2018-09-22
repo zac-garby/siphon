@@ -23,8 +23,6 @@ Data can be modified in a similar way.
  - Access the database via the HTTP API
  - Define database structure with a schema
  - Responses available as JSON
- - Persistant storage on disk
- - Support for graphQL queries
 
 ## TODO
 
@@ -33,6 +31,10 @@ Data can be modified in a similar way.
     - Add boolean operators, e.g. `users[name="foo" | (age>10 & age<20)]`
     - Add full expression support, e.g. `num_pairs[a + b > 5]`
     - Add global variables, e.g. `sessions[expires >= $TIMESTAMP]`
+ - Persistant storage to disk
+ - Implement "sessions":
+   - Clients can make sessions with a db instead of making a series of requests
+   - Requests sent over websocket, so faster
 
 ## Schema
 
