@@ -221,7 +221,7 @@ func (l *List) UnsetKey(key Item) (err error) {
 
 // UnsetKeyJSON removes the element at the given index, encoded in JSON.
 func (l *List) UnsetKeyJSON(json interface{}) (err error) {
-	key := MakeZeroValue(l.valType)
+	key := MakeZeroValue(&IntType{})
 
 	if err := key.Set(json); err != nil {
 		return err
